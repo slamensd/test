@@ -1,0 +1,309 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Montserrat", Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+  }
+  
+  a {
+    color: #06c;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    color: #0cf;
+    text-decoration: underline;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .header {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+  }
+  
+  .header .logo {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  .header .menu {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 20px;
+  }
+  
+  .header .menu a {
+    margin-left: 20px;
+  }
+  
+  .hero {
+    background-image: url("https://via.placeholder.com/1200x600");
+    background-size: cover;
+    background-position: center;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+  }
+  
+  .hero h1 {
+    font-size: 60px;
+    margin: 0;
+  }
+  
+  .hero p {
+    font-size: 24px;
+    margin: 20px 0;
+  }
+  
+  .cta {
+    background-color: #fff;
+    text-align: center;
+    padding: 80px 0;
+  }
+  
+  .cta h2 {
+    font-size: 48px;
+    margin: 0;
+  }
+  
+  .cta p {
+    font-size: 24px;
+    margin: 20px 0;
+  }
+  
+  .cta button {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    background-color: #06c;
+    border: none;
+    padding: 20px 40px;
+    margin-top: 40px;
+    cursor: pointer;
+  }
+  
+  .cta button:hover {
+    background-color: #0cf;
+  }
+  
+  .features {
+    background-color: #f9f9f9;
+    text-align: center;
+    padding: 80px 0;
+  }
+  
+  .features h2 {
+    font-size: 48px;
+    margin: 0;
+  }
+  
+  .features p {
+    font-size: 24px;
+    margin: 20px 0;
+  }
+  
+  .features .feature {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+  }
+  
+  .features .feature img {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+  }
+  
+  .features .feature p {
+    font-size: 18px;
+    line-height: 1.4;
+  }
+  
+  .testimonials {
+    background-color: #fff;
+    text-align: center;
+    padding: 80px 0;
+  }
+  
+  .testimonials h2 {
+    font-size: 48px;
+    margin: 0;
+  }
+  
+  .testimonials p {
+    font-size: 24px;
+    margin: 20px 0;
+  }
+  
+  .testimonials .testimonial {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+  }
+  
+  .testimonials .testimonial img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+  }
+  
+  .testimonials .testimonial h3 {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  .testimonials .testimonial p {
+    font-size: 18px;
+    line-height: 1.4;
+  }
+  
+  .footer {
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    padding: 80px 0;
+  }
+  
+  .footer p {
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  .footer .social {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+  
+  .footer .social a {
+    display: block;
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    border-radius: 50%;
+    margin: 0 10px;
+    text-align: center;
+    line-height: 40px;
+    color: #222;
+    transition: background-color 0.3s ease;
+  }
+  
+  .footer .social a:hover {
+    background-color: #06c;
+    color: #fff;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .header .menu {
+      flex-direction: column;
+    }
+  
+    .header .menu a {
+      margin: 0;
+      margin-top: 20px;
+    }
+  
+    .hero h1 {
+      font-size: 40px;
+    }
+  
+    .hero p {
+      font-size: 18px;
+    }
+  
+    .cta h2 {
+      font-size: 32px;
+    }
+  
+    .cta p {
+      font-size: 18px;
+    }
+  
+    .cta button {
+      font-size: 18px;
+      padding: 15px 30px;
+    }
+  
+    .features h2 {
+      font-size: 32px;
+    }
+  
+    .features p {
+      font-size: 18px;
+    }
+  
+    .features .feature img {
+      width: 80px;
+      height: 80px;
+    }
+  
+    .features .feature h3 {
+      font-size: 20px;
+    }
+  
+    .features .feature p {
+      font-size: 16px;
+    }
+  
+    .testimonials h2 {
+      font-size: 32px;
+    }
+  
+    .testimonials p {
+      font-size: 18px;
+    }
+  
+    .testimonials .testimonial img {
+      width: 60px;
+      height: 60px;
+    }
+  
+    .testimonials .testimonial h3 {
+      font-size: 20px;
+    }
+  
+    .testimonials .testimonial p {
+      font-size: 16px;
+    }
+  
+    .footer .social a {
+      font-size: 20px;
+      line-height: 36px;
+      width: 36px;
+      height: 36px;
+    }
+  }
+  
+  
