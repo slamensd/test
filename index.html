@@ -1,115 +1,313 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ruby Duby</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.4.1/dist/css/bootstrap.min.css"
-      integrity="sha384-k1g/4yABv24y0+vWxvk+QCwAzSBrl1fqlvQ8WnCOg/T9G92t7NJFnjH+v8oBz/gp"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="./style.css" />
+    <title>ERC1155 Token Application</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <style>
       body {
-  font-family: sans-serif;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.header {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9999;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-}
-
-.header .logo {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.header .menu a {
-  margin-left: 20px;
-  text-decoration: none;
-}
-
-.header .menu a:hover {
-  text-decoration: underline;
-}
-
-.container .content {
-  margin-top: 100px;
-}
-
-.container .content h1 {
-  font-size: 48px;
-  margin-bottom: 20px;
-}
-
-.container .content p {
-  font-size: 24px;
-  margin-bottom: 40px;
-}
-
-.container .content button {
-  font-size: 24px;
-  font-weight: 700;
-  color: #fff;
-  background-color: #06c;
-  border: none;
-  padding: 20px 40px;
-  margin-top: 40px;
-  cursor: pointer;
-}
-
-.container .content button:hover {
-  background-color: #0cf;
-}
-
-.container .content .message {
-  font-size: 24px;
-  font-weight: 700;
-  margin-top: 40px;
-  display: none;
-}
-
-.container .content .token-count {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.container .content .burn-token {
-  font-size: 24px;
-  font-weight: 700;
-  margin-top: 40px;
-}
-
+        font-family: sans-serif;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .header {
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+      }
+      .header .logo {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 0;
+      }
+      .header .menu a {
+        margin-left: 20px;
+        text-decoration: none;
+      }
+      .header .menu a:hover {
+        text-decoration: underline;
+      }
+      .content {
+        margin-top: 80px;
+      }
+      .token-count {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+      .burn-button {
+        font-size: 24px;
+        font-weight: 700;
+        color: #fff;
+        background-color: #06c;
+        border: none;
+        padding: 20px 40px;
+        margin-top: 40px;
+        cursor: pointer;
+      }
+      .burn-button:hover {
+        background-color: #0cf;
+      }
+      .hidden-message {
+        font-size: 24px;
+        font-weight: 700;
+        margin-top: 40px;
+        display: none;
+      }
     </style>
   </head>
   <body>
-    <button id="connect-button" class="btn btn-primary">Connect Wallet</button>
-    <p id="token-count"></p>
-    <button id="burn-button" class="btn btn-danger">Burn Token ID 6</button>
-    <p id="hidden-message" style="display: none">Congratulations! You have unlocked the hidden message!</p>
+    <header class="header">
+      <h1 class="logo">ERC1155 Token Application</h1>
+    </header>
+    <div class="container">
+      <div class="content">
+        <h2>Connect to Your Wallet</h2>
+        <p>
+          To use this application, you must have MetaMask installed and be connected to the Ethereum network.
+        </p>
+        <button id="connect-button" class="btn btn-primary">Connect to MetaMask</button>
+        <div id="token-count" class="token-count"></div>
+        <button id="burn-button" class="burn-button">Burn Token ID 6</button>
+        <p id="hidden-message" class="hidden-message">Congratulations! You have burned Token ID 6.</p>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.5.0/web3.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Initialize the Web3 object
+        let web3;
+        if (window.ethereum) {
+          web3 = new Web3(window.ethereum);
+          try {
+            // Request account access
+            await window.ethereum.enable();
+          } catch (error) {
+            console.error(error);
+            alert("Please allow access to your MetaMask account.");
+          } else if (window.web3) {
+          web3 = new Web3(window.web3.currentProvider);
+        } else {
+          console.log("MetaMask not detected.");
+          alert("Please install MetaMask to use this dApp.");
+        }
 
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@metamask/detect-provider@1.2.0/dist/detect-provider.min.js"></script>
-    <script src="./app.js"></script>
+        // Get the connect button
+        const connectButton = document.getElementById("connect-button");
+
+        // Get the token count paragraph
+        const tokenCountParagraph = document.getElementById("token-count");
+
+        // Get the burn button
+        const burnButton = document.getElementById("burn-button");
+
+        // Get the hidden message paragraph
+        const hiddenMessageParagraph = document.getElementById("hidden-message");
+
+        // Add a click event listener to the connect button
+        connectButton.addEventListener("click", async () => {
+          try {
+            // Get the user's Ethereum address
+            const accounts = await web3.eth.getAccounts();
+            const account = accounts[0];
+
+            // Initialize the ERC1155 contract address and ABI
+            const contractAddress = "0x232765be70a5f0b49e2d72eee9765813894c1fc4";
+            const contractABI = [
+              {
+                "inputs": [
+                  {
+                    "internalType": "address",
+                    "name": "_owner",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "_id",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "_value",
+                    "type": "uint256"
+                  }
+                ],
+                "name": "safeTransferFrom",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+              },
+              {
+                "inputs": [
+                  {
+                    "internalType": "address",
+                    "name": "_owner",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256[]",
+                    "name": "_ids",
+                    "type": "uint256[]"
+                  },
+                  {
+                    "internalType": "uint256[]",
+                    "name": "_values",
+                    "type": "uint256[]"
+                  }
+                ],
+                "name": "safeBatchTransferFrom",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+              },
+              {
+                "inputs": [
+                  {
+                    "internalType": "address",
+                    "name": "_owner",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "_id",
+                    "type": "uint256"
+                  }
+                ],
+                "name": "balanceOf",
+                "outputs": [
+                  {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                  }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+              }
+            ];
+
+            // Get the user's token count
+            const contract = new web3.eth.Contract(contractABI, contractAddress);
+            const tokenCount = await contract.methods.balanceOf(account, 6).call();
+
+            // Display the user's token count
+            tokenCountParagraph.innerText = `You have ${tokenCount} tokens of ID 6`;
+
+            // Show the burn button
+            burnButton.style.display = "block";
+          } catch (error) {
+            console.error(error);
+            alert(error.message);
+          }
+        });
+
+        // Add a click event listener to the burn button
+        burnButton.addEventListener("click", async () => {
+          try {
+            // Get the user's Ethereum address
+            const accounts  = await web3.eth.getAccounts();
+            const account = accounts[0];
+
+            // Initialize the ERC1155 contract address and ABI
+            const contractAddress = "0x232765be70a5f0b49e2d72eee9765813894c1fc4";
+            const contractABI = [
+              {
+                "inputs": [
+                  {
+                    "internalType": "address",
+                    "name": "_owner",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "_id",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "_value",
+                    "type": "uint256"
+                  }
+                ],
+                "name": "safeTransferFrom",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+              },
+              {
+                "inputs": [
+                  {
+                    "internalType": "address",
+                    "name": "_owner",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256[]",
+                    "name": "_ids",
+                    "type": "uint256[]"
+                  },
+                  {
+                    "internalType": "uint256[]",
+                    "name": "_values",
+                    "type": "uint256[]"
+                  }
+                ],
+                "name": "safeBatchTransferFrom",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+              },
+              {
+                "inputs": [
+                  {
+                    "internalType": "address",
+                    "name": "_owner",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "_id",
+                    "type": "uint256"
+                  }
+                ],
+                "name": "balanceOf",
+                "outputs": [
+                  {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                  }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+              }
+            ];
+
+            // Burn the token
+            const contract = new web3.eth.Contract(contractABI, contractAddress);
+            await contract.methods.safeTransferFrom(account, "0x0000000000000000000000000000000000000000", 6, 1, "").send({ from: account });
+
+            // Display the hidden message
+            hiddenMessageParagraph.style.display = "block";
+          } catch (error) {
+            console.error(error);
+            alert(error.message);
+          }
+        });
+      });
+    </script>
   </body>
 </html>
+
+
