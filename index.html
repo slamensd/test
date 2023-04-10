@@ -1,36 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERC1155 Token Burner</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@metamask/detect-provider"></script>
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.3.0/dist/web3.min.js"></script>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f8f9fa;
-        }
-        .container {
-            width: 600px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>ERC1155 Token Burner</h1>
-        <button id="connectWallet" class="btn btn-primary">Connect Wallet</button>
-        <p id="walletAddress"></p>
-        <p id="tokenBalance"></p>
-        <button id="burnToken" class="btn btn-danger" style="display:none">Burn Token ID 6</button>
-        <p id="hiddenMessage" style="display:none">Congratulations! You have unlocked the hidden message.</p>
-    </div>
-    <script src="./app.js"></script>
-</body>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>ERC1155 Token Balance</title>
+    <script
+      src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"
+      integrity="sha384-JoVnm+yzvxk6esv1+dLwW8RGK1HrT09jxTnt9RiW8aCnMkQjLuwp86sXdgq3bq5j"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.ethers.io/lib/ethers-5.4.umd.min.js"
+      integrity="sha384-Jg4ypXhJyJejH3qMWY8IXo+PQ52Fz/O+CGfcqJh8CvQu9sRyTlxHmT+Yw8JmUVjA"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/ethereum-qr-code@1.0.1/dist/ethereum-qr-code.min.js"
+      integrity="sha384-05jkNUeLcY/tax7VpwM1RccJgfg18SZ2ml9FjKuEpmr3gJr33wYwDpOyyxRg1ZlE"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/etherscan-api@1.7.0/dist/etherscan-api.min.js"
+      integrity="sha384-v8PywKs+OKnwpkK2+OZfPTaIoW9zvUsj85yIFp6/S+8ElwWudOs/iPc6UgK6UkQt"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <h1>ERC1155 Token Balance</h1>
+    <p>Connect your Ethereum wallet to check your ERC1155 Token #6 balance:</p>
+    <button id="connect-wallet-btn">Connect Wallet</button>
+    <p id="balance"></p>
+    <p id="qr-code"></p>
+    <script>
+      // Initialize Web3
+let web3;
+
+if (typeof window.ethereum !== "undefined") {
+  web3 = new Web3(window.ethereum);
+  window.ethereum.enable();
+} else {
+  console.log("Install Metamask");
+}
+
+//
+
+    </script>
+  </body>
 </html>
