@@ -61,12 +61,13 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    const ERC1155_ABI = [{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"components":[{"internalType":"address","name":"diamondCutFacet","type":"address"},{"internalType":"address","name":"diamondLoupeFacet","type":"address"},{"internalType":"address","name":"erc165Facet","type":"address"},{"internalType":"address","name":"erc173Facet","type":"address"}],"internalType":"struct Diamond.CoreFacets","name":"_coreFacets","type":"tuple"},{"components":[{"internalType":"address","name":"facetAddress","type":"address"},{"internalType":"enum IDiamondCut.FacetCutAction","name":"action","type":"uint8"},{"internalType":"bytes4[]","name":"functionSelectors","type":"bytes4[]"}],"internalType":"struct IDiamondCut.FacetCut[]","name":"_facets","type":"tuple[]"},{"components":[{"internalType":"address","name":"initContract","type":"address"},{"internalType":"bytes","name":"initData","type":"bytes"}],"internalType":"struct Diamond.Initialization[]","name":"_initializations","type":"tuple[]"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"facet","type":"address"},{"internalType":"bytes4","name":"selector","type":"bytes4"}],"name":"ErrDiamondFacetAlreadyExists","type":"error"},{"stateMutability":"payable","type":"fallback"},{"inputs":[{"internalType":"bytes[]","name":"data","type":"bytes[]"}],"name":"multicall","outputs":[{"internalType":"bytes[]","name":"results","type":"bytes[]"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]; // Fill in the correct ABI
+    const ERC1155_ABI = []; // Fill in the correct ABI
 
     function App() {
       const [account, setAccount] = useState('');
       const [tokenBalance, setTokenBalance] = useState(null);
       const [accessGranted, setAccessGranted] = useState(false);
+      const [provider, setProvider] = useState(null);
 
       const ERC1155_ADDRESS = '0x232765be70a5f0b49e2d72eee9765813894c1fc4';
       const TOKEN_ID = 6;
@@ -77,9 +78,8 @@
 
         if (provider) {
           try {
-            const accounts = await provider.request({ method: 'eth_requestAccounts' });
-            setAccount(accounts[0]);
-            checkToken();
+            await provider.request({ method: 'eth_requestAccounts' });
+            setProvider(provider);
           } catch (error) {
             console.error(error);
           }
@@ -89,59 +89,53 @@
       };
 
       const checkToken = async () => {
-  const web3 = new Web3(window.ethereum);
-  const erc1155Contract = new web3.eth.Contract(ERC1155_ABI, ERC1155_ADDRESS);
-  const balance = await erc1155Contract.methods.balanceOf(account, TOKEN_ID).call();
-  setTokenBalance(parseInt(balance));
-};
+    const web3 = new Web3(window.ethereum);
+    const erc1155Contract = new web3.eth.Contract(ERC1155_ABI, ERC1155_ADDRESS);
+    const balance = await erc1155Contract.methods.balanceOf(account, TOKEN_ID).call();
+    setTokenBalance(parseInt(balance));
+  };
 
+  const burnToken = async () => {
+    const web3 = new Web3(window.ethereum);
+    const erc1155Contract = new web3.eth.Contract(ERC1155_ABI, ERC1155_ADDRESS);
 
-const burnToken = async () => {
-  const provider = await detectEthereumProvider();
-  const web3 = new Web3(provider);
-  const erc1155Contract = new web3.eth.Contract(ERC1155_ABI, ERC1155_ADDRESS);
+    erc1155Contract.methods
+      .safeTransferFrom(account, BURN_ADDRESS, TOKEN_ID, 1, '0x')
+      .send({ from: account })
+      .on('transactionHash', (hash) => {
+        console.log('Transaction hash:', hash);
+      })
+      .on('receipt', (receipt) => {
+        console.log('Receipt:', receipt);
+        checkToken();
+        setAccessGranted(true);
+      })
+      .on('error', (error) => {
+        console.error('Error:', error);
+      });
+  };
 
-  erc1155Contract.methods
-    .safeTransferFrom(account, BURN_ADDRESS, TOKEN_ID, 1, '0x')
-    .send({ from: account })
-    .on('transactionHash', (hash) => {
-      console.log('Transaction hash:', hash);
-    })
-    .on('receipt', (receipt) => {
-      console.log('Receipt:', receipt);
+  useEffect(() => {
+    if (account) {
       checkToken();
-      setAccessGranted(true);
-    })
-    .on('error', (error) => {
-      console.error('Error:', error);
-    });
-};
-
-
-      useEffect(() => {
-        if (account) {
-          checkToken();
-        }
-      }, [account]);
-
-      return (
-        <div className="App">
-          <h1>NFT Token Burner</h1>
-          {!account && <button onClick={connectWallet}>Connect Wallet</button>}
-          {account && tokenBalance === null && <p>Checking token balance...</p>}
-          {account && tokenBalance !== null && tokenBalance === 0 && <p>You do not own any of the right tokens.</p>}
-          {account && tokenBalance > 0 && (
-            <>
-              <p>You have {tokenBalance} token(s).</p>
-              {!accessGranted && <button onClick={burnToken}>Burn Token</button>}
-              {accessGranted && <div className="hidden-content">Clue 1</div>}
-            </>
-          )}
-        </div>
-      );
     }
+  }, [account]);
 
-    ReactDOM.render(<App />, document.getElementById('app'));
-  </script>
-</body>
-</html>
+  return (
+    <div className="App">
+      <h1>NFT Token Burner</h1>
+      {!account && <button onClick={connectWallet}>Connect Wallet</button>}
+      {account && tokenBalance === null && <p>Checking token balance...</p>}
+      {account && tokenBalance !== null && tokenBalance === 0 && <p>You do not own any of the right tokens.</p>}
+      {account && tokenBalance > 0 && (
+        <>
+          <p>You have {tokenBalance} token(s).</p>
+          {!accessGranted && <button onClick={burnToken}>Burn Token</button>}
+          {accessGranted && <div className="hidden-content">Clue 1</div>}
+        </>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById('app'));
