@@ -96,25 +96,27 @@
 };
 
 
-      const burnToken = async () => {
-        const web3 = new Web3(provider);
-        const erc1155Contract = new web3.eth.Contract(ERC1155_ABI, ERC1155_ADDRESS);
+const burnToken = async () => {
+  const provider = await detectEthereumProvider();
+  const web3 = new Web3(provider);
+  const erc1155Contract = new web3.eth.Contract(ERC1155_ABI, ERC1155_ADDRESS);
 
-        erc1155Contract.methods
-          .safeTransferFrom(account, BURN_ADDRESS, TOKEN_ID, 1, '0x')
-          .send({ from: account })
-          .on('transactionHash', (hash) => {
-            console.log('Transaction hash:', hash);
-          })
-          .on('receipt', (receipt) => {
-            console.log('Receipt:', receipt);
-            checkToken();
-            setAccessGranted(true);
-          })
-          .on('error', (error) => {
-            console.error('Error:', error);
-          });
-      };
+  erc1155Contract.methods
+    .safeTransferFrom(account, BURN_ADDRESS, TOKEN_ID, 1, '0x')
+    .send({ from: account })
+    .on('transactionHash', (hash) => {
+      console.log('Transaction hash:', hash);
+    })
+    .on('receipt', (receipt) => {
+      console.log('Receipt:', receipt);
+      checkToken();
+      setAccessGranted(true);
+    })
+    .on('error', (error) => {
+      console.error('Error:', error);
+    });
+};
+
 
       useEffect(() => {
         if (account) {
