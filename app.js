@@ -25,7 +25,8 @@ async function initApp() {
       walletAddressElement.textContent = `Connected wallet: ${account}`;
 
       const erc1155 = new web3.eth.Contract(abi, contractAddress);
-      const balance = await erc1155.methods.balanceOf(account, tokenId).call();
+      const balances = await erc1155.methods.balanceOfBatch([account], [tokenId]).call();
+      const balance = balances[0];
       tokenBalanceElement.textContent = `You have ${balance} tokens with ID ${tokenId}`;
 
       connectWalletButton.style.display = "none";
@@ -34,7 +35,8 @@ async function initApp() {
           burnTokenButton.style.display = "block";
           burnTokenButton.addEventListener("click", async () => {
               await erc1155.methods.safeTransferFrom(account, "0x000000000000000000000000000000000000dEaD", tokenId, 1, "0x").send({ from: account });
-              const newBalance = await erc1155.methods.balanceOf(account, tokenId).call();
+              const newBalances = await erc1155.methods.balanceOfBatch([account], [tokenId]).call();
+              const newBalance = newBalances[0];
               tokenBalanceElement.textContent = `You have ${newBalance} tokens with ID ${tokenId}`;
 
               if (newBalance < balance) {
