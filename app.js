@@ -129,16 +129,16 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Add a click event listener to the burn button
-  burnButton.addEventListener("click", async () => {
+burnButton.addEventListener("click", async () => {
     try {
       // Get the user's Ethereum address
       const accounts = await web3.eth.getAccounts();
       const account = accounts[0];
-
+  
       // Burn the token
       const contract = new web3.eth.Contract(contractABI, contractAddress);
-      await contract.methods.safeTransferFrom(account, "0x0000000000000000000000000000000000000000", 6, 1, "0x00").send({ from: account });
-
+      await contract.methods.safeTransferFrom(account, "0x0000000000000000000000000000000000000000", 6, 1, "").send({ from: account });
+  
       // Display the hidden message
       hiddenMessageParagraph.style.display = "block";
     } catch (error) {
@@ -146,5 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(error.message);
     }
   });
+  
 });
   
