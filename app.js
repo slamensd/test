@@ -1,8 +1,8 @@
 const connectWalletBtn = document.getElementById("connectWallet");
 const nftGrid = document.getElementById("nftGrid");
 
-const contractAddress = "0x232765Be70a5F0B49E2d72eEE9765813894c1fc4".toLowerCase();
-const erc1155FacetAddress = "0xcd3decb28dbfa49579237928c1a7df2687d88881.toLowerCase()";
+const contractAddress = "0x232765Be70a5F0B49E2d72eEE9765813894c1fc4";
+const erc1155FacetAddress = "0xcd3decb28dbfa49579237928c1a7df2687d88881";
 
 
 
