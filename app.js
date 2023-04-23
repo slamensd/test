@@ -31,34 +31,27 @@ async function fetchNFTs(address) {
 
   console.log("Fetching NFTs for address:", address);
 
-  let displayedTokens = 0;
+  // Check balance for token ID 5
+  const tokenId = 5;
+  const balance = await erc1155Facet.balanceOf(address, tokenId);
+  console.log("Balance of token ID", tokenId, ":", balance.toString());
 
-  // Iterate over 6 different NFT types
-  for (let i = 0; i < 6; i++) {
-    const balance = await erc1155Facet.balanceOf(address, i);
-    console.log("Balance of token ID", i, ":", balance.toString());
+  if (balance.gt(0)) {
+    const tokenURI = await erc1155Facet.uri(tokenId);
+    console.log("Token URI of token ID", tokenId, ":", tokenURI);
 
-    if (balance.gt(0)) {
-      const tokenURI = await erc1155Facet.uri(i);
-      console.log("Token URI of token ID", i, ":", tokenURI);
+    const tokenData = await fetch(tokenURI).then((response) => response.json());
+    console.log("Token data of token ID", tokenId, ":", tokenData);
 
-      const tokenData = await fetch(tokenURI).then((response) => response.json());
-      console.log("Token data of token ID", i, ":", tokenData);
-
-      displayNFT(tokenData, i, balance);
-      displayedTokens++;
-    }
-  }
-
-  if (displayedTokens === 0) {
+    displayNFT(tokenData, tokenId, balance);
+  } else {
     const message = document.createElement("p");
-    message.textContent = "You do not have any tokens.";
+    message.textContent = "You do not have any tokens with ID 5.";
     document.getElementById("nft-grid").appendChild(message);
   }
 
-  console.log("Fetch NFTs function completed."); // Add this line
+  console.log("Fetch NFTs function completed.");
 }
-
 
 
 
