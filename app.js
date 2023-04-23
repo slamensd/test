@@ -11,28 +11,28 @@ const connectWalletBtn = document.getElementById('connect-wallet-btn');
 const nftGrid = document.getElementById('nft-grid');
 
 connectWalletBtn.addEventListener('click', async () => {
-  try {
-    await window.ethereum.enable();
-    const accounts = await web3.eth.getAccounts();
-    const address = accounts[0];
-    const balance = await contract.balanceOf(address);
-    const nftIds = [];
-    for (let i = 0; i < balance; i++) {
-      const nftId = await contract.tokenOfOwnerByIndex(address, i);
-      nftIds.push(nftId);
+    try {
+      await window.ethereum.enable();
+      const address = ethereum.selectedAddress;
+      const balance = await contract.balanceOf(address);
+      const nftIds = [];
+      for (let i = 0; i < balance; i++) {
+        const nftId = await contract.tokenOfOwnerByIndex(address, i);
+        nftIds.push(nftId);
+      }
+      const nfts = await Promise.all(nftIds.map(async (nftId) => {
+        const nft = await contract.getNFT(nftId);
+        const name = nft.name;
+        const image = nft.image;
+        const owned = await contract.balanceOf(address, nftId);
+        return { name, image, owned };
+      }));
+      renderNfts(nfts);
+    } catch (error) {
+      console.error(error);
     }
-    const nfts = await Promise.all(nftIds.map(async (nftId) => {
-      const nft = await contract.getNFT(nftId);
-      const name = nft.name;
-      const image = nft.image;
-      const owned = await contract.balanceOf(address, nftId);
-      return { name, image, owned };
-    }));
-    renderNfts(nfts);
-  } catch (error) {
-    console.error(error);
-  }
-});
+  });
+  
 
 function renderNfts(nfts) {
   nftGrid.innerHTML = '';
