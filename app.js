@@ -1,21 +1,17 @@
+// Initialize Moralis
+Moralis.initialize("YOUR_MORALIS_APPLICATION_ID");
+Moralis.serverURL = "YOUR_MORALIS_SERVER_URL";
+
 const connectWalletBtn = document.getElementById("connectWallet");
 const nftGrid = document.getElementById("nft-grid");
 
-const contractAddress = "0x232765be70a5f0b49e2d72eee9765813894c1fc4".toLowerCase();
-const erc1155FacetAddress = "0xcd3decb28dbfa49579237928c1a7df2687d88881".toLowerCase();
-
-const diamondAbi = [{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"components":[{"internalType":"address","name":"diamondCutFacet","type":"address"},{"internalType":"address","name":"diamondLoupeFacet","type":"address"},{"internalType":"address","name":"erc165Facet","type":"address"},{"internalType":"address","name":"erc173Facet","type":"address"}],"internalType":"struct Diamond.CoreFacets","name":"_coreFacets","type":"tuple"},{"components":[{"internalType":"address","name":"facetAddress","type":"address"},{"internalType":"enum IDiamondCut.FacetCutAction","name":"action","type":"uint8"},{"internalType":"bytes4[]","name":"functionSelectors","type":"bytes4[]"}],"internalType":"struct IDiamondCut.FacetCut[]","name":"_facets","type":"tuple[]"},{"components":[{"internalType":"address","name":"initContract","type":"address"},{"internalType":"bytes","name":"initData","type":"bytes"}],"internalType":"struct Diamond.Initialization[]","name":"_initializations","type":"tuple[]"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"facet","type":"address"},{"internalType":"bytes4","name":"selector","type":"bytes4"}],"name":"ErrDiamondFacetAlreadyExists","type":"error"},{"stateMutability":"payable","type":"fallback"},{"inputs":[{"internalType":"bytes[]","name":"data","type":"bytes[]"}],"name":"multicall","outputs":[{"internalType":"bytes[]","name":"results","type":"bytes[]"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
-const erc1155Abi = [{"inputs":[{"internalType":"address","name":"operator","type":"address"}],"name":"OperatorNotAllowed","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"indexed":false,"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"TransferBatch","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"TransferSingle","type":"event"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"accounts","type":"address[]"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"}],"name":"balanceOfBatch","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"burnBatch","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"burnBatchByFacet","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burnByFacet","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"id","type":"uint256"}],"name":"exists","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"lockByFacet","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"accounts","type":"address[]"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"name":"lockByFacet","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256[]","name":"ticketTokenIds","type":"uint256[]"}],"name":"locked","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"locked","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"id","type":"uint256"}],"name":"maxSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"tos","type":"address[]"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"internalType":"uint256[]","name":"amounts","type":"uint256[]"},{"internalType":"bytes[]","name":"datas","type":"bytes[]"}],"name":"mintByFacet","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"mintByFacet","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"internalType":"uint256[]","name":"amounts","type":"uint256[]"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeBatchTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"id","type":"uint256"}],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"accounts","type":"address[]"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"name":"unlockByFacet","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"unlockByFacet","outputs":[],"stateMutability":"nonpayable","type":"function"}];
-
-let provider, signer;
+const tokenId = 5;
 
 async function connectWallet() {
-  if (typeof window.ethereum !== "undefined") {w
-    provider = new ethers.providers.Web3Provider(window.ethereum);
-    signer = provider.getSigner();
+  if (typeof window.ethereum !== "undefined") {
     try {
       await window.ethereum.request({ method: "eth_requestAccounts" });
-      const address = await signer.getAddress();
+      const address = window.ethereum.selectedAddress;
       fetchNFTs(address);
     } catch (err) {
       console.error("User rejected connection request");
@@ -26,36 +22,44 @@ async function connectWallet() {
 }
 
 async function fetchNFTs(address) {
-  const diamondContract = new ethers.Contract(contractAddress, diamondAbi, signer);
-  const erc1155Facet = new ethers.Contract(erc1155FacetAddress, erc1155Abi, signer);
-
   console.log("Fetching NFTs for address:", address);
 
-  // Check balance for token ID 5
+  const apiKey = "Qdpq4yyBC53Vxx6ApjeOlC0OxtK7wRbhQSMTGVB0WiwEErpGOo1pNqC17kTnBQD6";
+  const chain = "0x1"; // Ethereum Mainnet
   const tokenId = 5;
-  const balance = await erc1155Facet.balanceOf(address, tokenId);
-  console.log("Balance of token ID", tokenId, ":", balance.toString());
+  const url = `https://deep-index.moralis.io/api/v2/${address}/nft?chain=${chain}&token_id=${tokenId}&format=decimal`;
 
-  if (balance.gt(0)) {
-    const tokenURI = await erc1155Facet.uri(tokenId);
-    console.log("Token URI of token ID", tokenId, ":", tokenURI);
+  const options = {
+    method: "GET",
+    headers: {
+      "X-API-Key": apiKey,
+    },
+  };
 
-    const tokenData = await fetch(tokenURI).then((response) => response.json());
-    console.log("Token data of token ID", tokenId, ":", tokenData);
+  try {
+    const response = await fetch(url, options);
+    const data = await response.json();
 
-    displayNFT(tokenData, tokenId, balance);
-  } else {
-    const message = document.createElement("p");
-    message.textContent = "You do not have any tokens with ID 5.";
-    document.getElementById("nft-grid").appendChild(message);
+    if (data.total === 0) {
+      const message = document.createElement("p");
+      message.textContent = "You do not have any tokens.";
+      document.getElementById("nft-grid").appendChild(message);
+    } else {
+      const nft = data.result[0];
+      const tokenData = {
+        image: nft.image_url,
+        name: nft.name,
+      };
+      const quantity = nft.amount;
+
+      displayNFT(tokenData, tokenId, quantity);
+    }
+
+    console.log("Fetch NFTs function completed.");
+  } catch (error) {
+    console.error("Error fetching NFT data:", error);
   }
-
-  console.log("Fetch NFTs function completed.");
 }
-
-
-
-
 
 
 function displayNFT(tokenData, tokenId, quantity) {
@@ -71,7 +75,7 @@ function displayNFT(tokenData, tokenId, quantity) {
   nftName.classList.add("nft-name");
 
   const nftQuantity = document.createElement("div");
-  nftQuantity.innerText = `Owned: ${quantity.toNumber()}`;
+  nftQuantity.innerText = `Owned: ${quantity}`;
   nftQuantity.classList.add("nft-quantity");
 
   nftItem.appendChild(nftImage);
