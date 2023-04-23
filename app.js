@@ -29,24 +29,35 @@ async function fetchNFTs(address) {
   const diamondContract = new ethers.Contract(contractAddress, diamondAbi, signer);
   const erc1155Facet = new ethers.Contract(erc1155FacetAddress, erc1155Abi, signer);
 
-  console.log("Fetching NFTs for address:", address); // Add this line
+  console.log("Fetching NFTs for address:", address);
 
-  // Assuming a maximum of 20 different NFT types
-  for (let i = 0; i < 20; i++) {
+  let displayedTokens = 0; // Add this line
+
+  // Iterate over 6 different NFT types
+  for (let i = 0; i < 6; i++) {
     const balance = await erc1155Facet.balanceOf(address, i);
-    console.log("Balance of token ID", i, ":", balance.toString()); // Add this line
+    console.log("Balance of token ID", i, ":", balance.toString());
 
     if (balance.gt(0)) {
       const tokenURI = await erc1155Facet.uri(i);
-      console.log("Token URI of token ID", i, ":", tokenURI); // Add this line
+      console.log("Token URI of token ID", i, ":", tokenURI);
 
       const tokenData = await fetch(tokenURI).then((response) => response.json());
-      console.log("Token data of token ID", i, ":", tokenData); // Add this line
+      console.log("Token data of token ID", i, ":", tokenData);
 
       displayNFT(tokenData, i, balance);
+      displayedTokens++; // Add this line
     }
   }
+
+  // Add these lines
+  if (displayedTokens === 0) {
+    const message = document.createElement("p");
+    message.textContent = "You do not have any tokens.";
+    document.getElementById("nft-grid").appendChild(message);
+  }
 }
+
 
 
 
