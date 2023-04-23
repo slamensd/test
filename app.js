@@ -31,7 +31,7 @@ async function fetchNFTs(address) {
 
   console.log("Fetching NFTs for address:", address);
 
-  let displayedTokens = 0; // Add this line
+  let displayedTokens = 0;
 
   // Iterate over 6 different NFT types
   for (let i = 0; i < 6; i++) {
@@ -46,17 +46,19 @@ async function fetchNFTs(address) {
       console.log("Token data of token ID", i, ":", tokenData);
 
       displayNFT(tokenData, i, balance);
-      displayedTokens++; // Add this line
+      displayedTokens++;
     }
   }
 
-  // Add these lines
   if (displayedTokens === 0) {
     const message = document.createElement("p");
     message.textContent = "You do not have any tokens.";
     document.getElementById("nft-grid").appendChild(message);
   }
+
+  console.log("Fetch NFTs function completed."); // Add this line
 }
+
 
 
 
