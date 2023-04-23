@@ -29,8 +29,8 @@ async function fetchNFTs(address) {
   const diamondContract = new ethers.Contract(contractAddress, diamondAbi, signer);
   const erc1155Facet = new ethers.Contract(erc1155FacetAddress, erc1155Abi, signer);
 
-  // You might need to change the method name according to your contract implementation
-  const balance = await erc1155Facet.balanceOfBatch(
+  // Call balanceOfBatch using the diamondContract instance
+  const balance = await diamondContract.balanceOfBatch(
     Array(20).fill(address), // Assuming a maximum of 20 different NFT types
     Array.from({ length: 20 }, (_, i) => i)
   );
@@ -43,6 +43,7 @@ async function fetchNFTs(address) {
     }
   }
 }
+
 
 function displayNFT(tokenData, tokenId, quantity) {
   const nftItem = document.createElement("div");
