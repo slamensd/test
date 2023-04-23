@@ -1,0 +1,24 @@
+.card {
+    width: 18rem;
+    margin: 1rem;
+  }
+  
+  .card-img-top {
+    height: 200px;
+    object-fit: contain;
+  }
+  
+  .card-title {
+    margin-bottom: 0;
+  }
+  
+  .card-text {
+    margin-top: 0;
+  }
+  
+  @media (max-width: 576px) {
+    .card {
+      width: 100%;
+    }
+  }
+  
