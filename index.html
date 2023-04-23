@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NFT Viewer</title>
-  <link rel="stylesheet" href="./style.css">
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
-  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
-  type="application/javascript"></script>
-  <script src="https://unpkg.com/moralis/dist/moralis.min.js"></script>
-  
- 
-</head> 
-<body>
-  <div class="container">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NFT Token Checker</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/moralis@0.0.85/dist/moralis.min.js"></script>
+    <script src="https://unpkg.com/@moralisweb3/common-evm-utils@0.0.13/dist/index.umd.min.js"></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <h1>NFT Token Checker</h1>
     <button id="connectWallet">Connect Wallet</button>
-    <div class="nft-grid" id="nft-grid"></div>
-  </div>
-  <script src="./app.js"></script>
-</body>
+    <div id="nftDisplay" class="hidden">
+      <h2>NFTs with Token ID 5:</h2>
+      <ul id="nftList"></ul>
+    </div>
+    <div id="noTokens" class="hidden">
+      <h2>You don't have any NFTs with Token ID 5.</h2>
+    </div>
+  </body>
 </html>

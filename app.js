@@ -1,87 +1,56 @@
-// Initialize Moralis
-Moralis.initialize("YOUR_MORALIS_APPLICATION_ID");
-Moralis.serverURL = "YOUR_MORALIS_SERVER_URL";
-
-const connectWalletBtn = document.getElementById("connectWallet");
-const nftGrid = document.getElementById("nft-grid");
-
-const tokenId = 5;
-
-async function connectWallet() {
-  if (typeof window.ethereum !== "undefined") {
-    try {
-      await window.ethereum.request({ method: "eth_requestAccounts" });
-      const address = window.ethereum.selectedAddress;
-      fetchNFTs(address);
-    } catch (err) {
-      console.error("User rejected connection request");
-    }
-  } else {
-    console.error("Ethereum provider not found");
-  }
-}
-
-async function fetchNFTs(address) {
-  console.log("Fetching NFTs for address:", address);
+document.addEventListener("DOMContentLoaded", () => {
+  const Moralis = window.Moralis.default;
+  const EvmChain = window.MoralisWeb3CommonEvmUtils.EvmChain;
 
   const apiKey = "Qdpq4yyBC53Vxx6ApjeOlC0OxtK7wRbhQSMTGVB0WiwEErpGOo1pNqC17kTnBQD6";
-  const chain = "0x1"; // Ethereum Mainnet
+  const contractAddress = "0x232765be70a5f0b49e2d72eee9765813894c1fc4";
   const tokenId = 5;
-  const url = `https://deep-index.moralis.io/api/v2/${address}/nft?chain=${chain}&token_id=${tokenId}&format=decimal`;
 
-  const options = {
-    method: "GET",
-    headers: {
-      "X-API-Key": apiKey,
-    },
+  const connectWalletButton = document.getElementById("connectWallet");
+  const nftDisplay = document.getElementById("nftDisplay");
+  const nftList = document.getElementById("nftList");
+  const noTokens = document.getElementById("noTokens");
+
+  const runApp = async () => {
+    await Moralis.start({ apiKey });
   };
 
-  try {
-    const response = await fetch(url, options);
-    const data = await response.json();
+  const getUserNFTs = async (address) => {
+    const options = {
+      chain: EvmChain.ETHEREUM,
+      address,
+      token_id: tokenId,
+      asset_contract_address: contractAddress,
+    };
+    return await Moralis.Web3Data.getNFTsForContract(options);
+  };
 
-    if (data.total === 0) {
-      const message = document.createElement("p");
-      message.textContent = "You do not have any tokens.";
-      document.getElementById("nft-grid").appendChild(message);
-    } else {
-      const nft = data.result[0];
-      const tokenData = {
-        image: nft.image_url,
-        name: nft.name,
-      };
-      const quantity = nft.amount;
-
-      displayNFT(tokenData, tokenId, quantity);
+  const displayNFTs = (nfts) => {
+    if (nfts.length === 0) {
+      noTokens.classList.remove("hidden");
+      nftDisplay.classList.add("hidden");
+      return;
     }
+    nftList.innerHTML = "";
+    for (const nft of nfts) {
+      const listItem = document.createElement("li");
+      listItem.textContent = `Token ID: ${nft.token_id} - ${nft.name || nft.description || "No name/description available"}`;
+      nftList.appendChild(listItem);
+    }
+    noTokens.classList.add("hidden");
+    nftDisplay.classList.remove("hidden");
+  };
 
-    console.log("Fetch NFTs function completed.");
-  } catch (error) {
-    console.error("Error fetching NFT data:", error);
-  }
-}
+  connectWalletButton.addEventListener("click", async () => {
+    try {
+      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+      const userAddress = accounts[0];
+      const userNFTs = await getUserNFTs(userAddress);
+      displayNFTs(userNFTs);
+    } catch (error) {
+      console.error("Error connecting wallet:", error);
+    }
+  });
 
-
-function displayNFT(tokenData, tokenId, quantity) {
-  const nftItem = document.createElement("div");
-  nftItem.classList.add("nft-item");
-
-  const nftImage = document.createElement("img");
-  nftImage.src = tokenData.image;
-  nftImage.classList.add("nft-image");
-
-  const nftName = document.createElement("div");
-  nftName.innerText = tokenData.name;
-  nftName.classList.add("nft-name");
-
-  const nftQuantity = document.createElement("div");
-  nftQuantity.innerText = `Owned: ${quantity}`;
-  nftQuantity.classList.add("nft-quantity");
-
-  nftItem.appendChild(nftImage);
-  nftItem.appendChild(nftName);
-  nftItem.appendChild(nftQuantity);
-  nftGrid.appendChild(nftItem);
-}
-
-connectWalletBtn.addEventListener("click", connectWallet);
+  runApp();
+});
