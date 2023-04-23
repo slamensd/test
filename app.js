@@ -29,22 +29,17 @@ async function fetchNFTs(address) {
   const diamondContract = new ethers.Contract(contractAddress, diamondAbi, signer);
   const erc1155Facet = new ethers.Contract(erc1155FacetAddress, erc1155Abi, signer);
 
-  const balance = await diamondContract.balanceOfBatch(
-    Array(20).fill(address), // Assuming a maximum of 20 different NFT types
-    Array.from({ length: 20 }, (_, i) => i)
-  );
-
-  console.log("Balances:", balance); // Add this line
-
-  for (let i = 0; i < balance.length; i++) {
-    if (balance[i].gt(0)) {
-      console.log("Fetching NFT with ID:", i); // Add this line
+  // Assuming a maximum of 20 different NFT types
+  for (let i = 0; i < 6; i++) {
+    const balance = await erc1155Facet.balanceOf(address, i);
+    if (balance.gt(0)) {
       const tokenURI = await erc1155Facet.uri(i);
       const tokenData = await fetch(tokenURI).then((response) => response.json());
-      displayNFT(tokenData, i, balance[i]);
+      displayNFT(tokenData, i, balance);
     }
   }
 }
+
 
 
 
