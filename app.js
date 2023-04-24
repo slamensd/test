@@ -1,4 +1,4 @@
-const Web3 = require("web3");
+
 
 const connectBtn = document.getElementById("connect-btn");
 const walletAddressElem = document.getElementById("wallet-address");
