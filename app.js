@@ -47,29 +47,30 @@ async function displayERC721Balance(address) {
 }
 
 async function displayNFTs(address) {
-  try {
-      const nftGrid = document.querySelector('.nft-grid');
-      const maxTokenId = 3222; // Set this value to a suitable maximum token ID
+    try {
+        const nftGrid = document.querySelector('.nft-grid');
+        const maxTokenId = 10000; // Set this value to a suitable maximum token ID
+        const ipfsGateway = 'https://ipfs.io/ipfs/';
 
-      for (let tokenId = 1; tokenId <= maxTokenId; tokenId++) {
-          const owner = await contract.methods.ownerOf(tokenId).call();
+        for (let tokenId = 1; tokenId <= maxTokenId; tokenId++) {
+            const owner = await contract.methods.ownerOf(tokenId).call();
 
-          if (owner.toLowerCase() === address.toLowerCase()) {
-              const tokenURI = await contract.methods.tokenURI(tokenId).call();
-              const response = await fetch(tokenURI);
-              const metadata = await response.json();
+            if (owner.toLowerCase() === address.toLowerCase()) {
+                const tokenURI = await contract.methods.tokenURI(tokenId).call();
+                const ipfsUrl = tokenURI.replace('ipfs://', ipfsGateway);
+                const response = await fetch(ipfsUrl);
+                const metadata = await response.json();
 
-              const nft = document.createElement('div');
-              nft.classList.add('nft');
-              nft.innerHTML = `
-                  <img src="${metadata.image}" alt="${metadata.name}">
-                  <h3>${metadata.name}</h3>
-              `;
-              nftGrid.appendChild(nft);
-          }
-      }
-  } catch (error) {
-      console.error("Error fetching NFTs:", error);
-  }
+                const nft = document.createElement('div');
+                nft.classList.add('nft');
+                nft.innerHTML = `
+                    <img src="${metadata.image}" alt="${metadata.name}">
+                    <h3>${metadata.name}</h3>
+                `;
+                nftGrid.appendChild(nft);
+            }
+        }
+    } catch (error) {
+        console.error("Error fetching NFTs:", error);
+    }
 }
-
