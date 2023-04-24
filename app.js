@@ -11,7 +11,7 @@ const CONTRACT_ABI = [{"inputs":[{"components":[{"internalType":"string","name":
 
 
 const ALCHEMY_API_KEY = "0iVz_duFVpyzVcHv6GgqHjBFNhkbqn0J";
-const alchemyBaseUrl = `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`;
+const alchemyBaseUrl = `https://eth-mainnet.g.alchemy.com/v2/0iVz_duFVpyzVcHv6GgqHjBFNhkbqn0J`;
 
 let userAccount = null;
 let alchemyWeb3 = null;
