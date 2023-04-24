@@ -47,6 +47,9 @@ async function displayERC721Balance(address) {
 }
 
 async function displayNFTs(address) {
+    const loader = document.getElementById('loader');
+    loader.classList.remove('hidden');
+
     try {
         const nftGrid = document.querySelector('.nft-grid');
         const totalSupply = await contract.methods.totalSupply().call();
@@ -73,6 +76,8 @@ async function displayNFTs(address) {
         }
     } catch (error) {
         console.error("Error fetching NFTs:", error);
+    }finally {
+        loader.classList.add('hidden');
     }
 }
 
