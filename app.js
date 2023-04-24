@@ -48,8 +48,8 @@ connectBtn.addEventListener("click", async () => {
       console.log("Fetched tokens:", fetchedTokens);
 
       // Show dashboard
-      document.querySelector(".connect-wallet").classList.add("d-none");
-      document.querySelector(".dashboard").classList.remove("d-none");
+      document.querySelector(".connect-wallet").style.display = "none";
+      document.querySelector(".dashboard").style.display = "block";
     } catch (error) {
       console.error("Error connecting wallet:", error);
     }
