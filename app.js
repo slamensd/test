@@ -26,48 +26,37 @@ async function createNftCard(metadata) {
 }
 
 connectBtn.addEventListener("click", async () => {
-  try {
-    const accounts = await ethereum.request({ method: "eth_requestAccounts" });
-    const userAccount = accounts[0];
-    walletAddressElem.innerText = userAccount;
+  if (window.ethereum) {
+    try {
+      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+      userAccount = accounts[0];
+      walletAddressElem.innerText = userAccount;
 
-    const balance = await contract.methods.balanceOf(userAccount).call();
-    erc721BalanceElem.innerText = balance;
+      const balance = await contract.methods.balanceOf(userAccount).call();
+      erc721BalanceElem.innerText = balance;
 
-    const nftIds = [];
-    for (let i = 0; i < balance; i++) {
-      const nftId = await contract.methods.tokenOfOwnerByIndex(userAccount, i).call();
-      nftIds.push(nftId);
+      const tokenIds = await contract.methods.tokensOfOwner(userAccount).call();
+
+      for (let i = 0; i < tokenIds.length; i++) {
+        const tokenId = tokenIds[i];
+        const tokenURI = await contract.methods.tokenURI(tokenId).call();
+        const metadata = await fetch(tokenURI).then((res) => res.json());
+        const nftCard = createNftCard(metadata);
+        nftContainer.appendChild(nftCard);
+      }
+
+      const connectWalletSection = document.querySelector(".connect-wallet");
+      const dashboardSection = document.querySelector(".dashboard");
+
+      if (connectWalletSection && dashboardSection) {
+        connectWalletSection.classList.remove("connect-wallet");
+        dashboardSection.classList.add("connect-wallet");
+      } else {
+        console.error("Cannot find .connect-wallet and/or .dashboard elements");
+      }
+
+    } catch (err) {
+      console.error(`Error connecting wallet: ${err}`);
     }
-
-    const promises = nftIds.map((nftId) => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const tokenURI = await contract.methods.tokenURI(nftId).call();
-          const metadata = await fetch(tokenURI).then((res) => res.json());
-          const nftCard = await createNftCard(metadata);
-          resolve(nftCard);
-        } catch (error) {
-          reject(error);
-        }
-      });
-    });
-
-    const nftCards = await Promise.all(promises);
-    nftCards.forEach((nftCard) => {
-      nftContainer.appendChild(nftCard);
-    });
-
-    const connectWalletSection = document.querySelector(".connect-wallet");
-    const dashboardSection = document.querySelector(".dashboard");
-
-    if (connectWalletSection && dashboardSection) {
-      connectWalletSection.classList.remove("connect-wallet");
-      dashboardSection.classList.add("connect-wallet");
-    } else {
-      console.error("Cannot find .connect-wallet and/or .dashboard elements");
-    }
-  } catch (error) {
-    console.error("Error connecting wallet:", error);
   }
 });
