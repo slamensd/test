@@ -54,7 +54,8 @@ async function displayNFTs(tokenIds) {
 
     for (const tokenId of tokenIds) {
         const tokenURI = await contract.methods.tokenURI(tokenId).call();
-        const response = await fetch(tokenURI);
+        const ipfsUrl = tokenURI.replace('ipfs://', 'https://ipfs.dweb.link/');
+        const response = await fetch(ipfsUrl);
         const metadata = await response.json();
 
         const nft = document.createElement('div');
