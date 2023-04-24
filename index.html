@@ -5,37 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NFT Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.1/web3.min.js"></script>
-    <script src="app.js" defer></script>
 </head>
 <body>
     <header>
-        <img src="logo.png" alt="Logo" class="logo">
+        <div class="logo">NFT App</div>
     </header>
-    <div class="container">
-        <nav class="side-menu">
+    <aside>
+        <nav>
             <ul>
-                <li><a href="#">Page 1</a></li>
-                <li><a href="#">Page 2</a></li>
-                <li><a href="#">Page 3</a></li>
-                <li><a href="#">Page 4</a></li>
+                <li><a href="#page1">Page 1</a></li>
+                <li><a href="#page2">Page 2</a></li>
+                <li><a href="#page3">Page 3</a></li>
+                <li><a href="#page4">Page 4</a></li>
             </ul>
         </nav>
-        <main class="main-content">
-            <div id="wallet-connect">
-                <button onclick="connectWallet()">Connect Wallet</button>
-            </div>
-            <div class="dashboard hidden">
-                <div class="dashboard-info">
-                    <div class="black-box"></div>
-                    <div class="wallet-info">
-                        <p>Connected Address: <span id="wallet-address" class="wallet-address"></span></p>
-                        <p>Nippy: Magnet for Mischief Balance: <span id="nippy-balance" class="nippy-balance"></span></p>
-                    </div>
+    </aside>
+    <main>
+        <div id="connect-wallet" class="connect-wallet">
+            <button onclick="connectWallet()">Connect Wallet</button>
+        </div>
+
+        <div id="dashboard" class="dashboard hidden">
+            <div class="dashboard-info">
+                <div class="black-box"></div>
+                <div class="wallet-info">
+                    <p>Connected Address: <span id="wallet-address" class="wallet-address"></span></p>
+                    <p>Nippy: Magnet for Mischief Balance: <span id="nippy-balance" class="nippy-balance"></span></p>
                 </div>
-                <div class="nft-grid"></div>
             </div>
-        </main>
-    </div>
+            <div class="nft-grid"></div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
