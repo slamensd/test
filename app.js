@@ -46,39 +46,38 @@ async function displayERC721Balance(address) {
     }
 }
 
-async function displayNFTs(address) {
-    const loader = document.getElementById('loader');
-    loader.classList.remove('hidden');
+async function displayNFTs(tokenIds) {
+    const nftGrid = document.getElementById('nft-grid');
+    nftGrid.innerHTML = '';
 
-    try {
-        const nftGrid = document.querySelector('.nft-grid');
-        const totalSupply = await contract.methods.totalSupply().call();
-        const ipfsGateway = 'https://ipfs.io/ipfs/';
+    for (const tokenId of tokenIds) {
+        const tokenURI = await contract.methods.tokenURI(tokenId).call();
+        const response = await fetch(tokenURI);
+        const metadata = await response.json();
 
-        for (let tokenId = 1; tokenId <= totalSupply; tokenId++) {
-            const owner = await contract.methods.ownerOf(tokenId).call();
+        const nft = document.createElement('div');
+        nft.className = 'nft';
 
-            if (owner.toLowerCase() === address.toLowerCase()) {
-                const tokenURI = await contract.methods.tokenURI(tokenId).call();
-                const ipfsUrl = tokenURI.replace('ipfs://', ipfsGateway);
-                const response = await fetch(ipfsUrl);
-                const metadata = await response.json();
+        const img = document.createElement('img');
+        img.src = metadata.image;
+        nft.appendChild(img);
 
-                const nft = document.createElement('div');
-                nft.classList.add('nft');
-                nft.innerHTML = `
-                    <img src="${metadata.image}" alt="${metadata.name}">
-                    <h3>${metadata.name}</h3>
-                    <p>Last for-sale price: ${metadata.Books} ETH</p>
-                `;
-                nftGrid.appendChild(nft);
+        const name = document.createElement('h3');
+        name.textContent = metadata.name;
+        nft.appendChild(name);
+
+        const traits = ['Character', 'Books', 'Videos', 'Games', 'Toys', 'Music'];
+
+        for (const trait of traits) {
+            const attribute = metadata.attributes.find(attr => attr.trait_type === trait);
+            if (attribute) {
+                const traitElement = document.createElement('p');
+                traitElement.textContent = `${trait}: ${attribute.value}`;
+                nft.appendChild(traitElement);
             }
         }
-    } catch (error) {
-        console.error("Error fetching NFTs:", error);
-    }finally {
-        loader.classList.add('hidden');
+
+        nftGrid.appendChild(nft);
     }
 }
-
 
