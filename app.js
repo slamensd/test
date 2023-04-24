@@ -52,13 +52,14 @@ connectBtn.addEventListener("click", async () => {
         currentTokenId++;
       }
 
-      // Hide "Connect Wallet" and show "Dashboard"
-      document.querySelector(".connect-wallet").style.display = "none";
-      document.querySelector(".dashboard").style.display = "block";
-    } catch (error) {
-      console.error("Error connecting wallet:", error);
-    }
-  } else {
-    alert("Ethereum provider not found. Please install MetaMask or another Web3 provider.");
-  }
+      const connectWalletSection = document.querySelector('.connect-wallet');
+      const dashboardSection = document.querySelector('.dashboard');
+
+      if (connectWalletSection && dashboardSection) {
+      connectWalletSection.style.display = 'none';
+      dashboardSection.style.display = 'block';
+      } else {
+       console.error('Cannot find .connect-wallet and/or .dashboard elements');
+      }
+   }
 });
