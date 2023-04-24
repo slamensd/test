@@ -49,12 +49,13 @@ async function displayERC721Balance(address) {
 async function displayNFTs(tokenIds) {
     const nftGrid = document.getElementById('nft-grid');
     const loader = document.getElementById('loader');
+    const ipfsGateway = 'https://ipfs.io/ipfs/';
     nftGrid.innerHTML = '';
     loader.style.display = 'block'; // Show loader
 
     for (const tokenId of tokenIds) {
         const tokenURI = await contract.methods.tokenURI(tokenId).call();
-        const ipfsUrl = tokenURI.replace('ipfs://', 'https://ipfs.dweb.link/');
+        const ipfsUrl = tokenURI.replace('ipfs://', ipfsGateway);
         const response = await fetch(ipfsUrl);
         const metadata = await response.json();
 
