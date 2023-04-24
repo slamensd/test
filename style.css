@@ -48,9 +48,7 @@ header {
   padding: 20px;
 }
 
-.wallet-info {
-  margin-bottom: 20px;
-}
+
 /* ... */
 .dashboard-info {
   display: flex;
@@ -69,3 +67,36 @@ header {
   text-align: right;
 }
 /* ... */
+
+.nft-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 20px;
+  margin-top: 20px;
+}
+
+.nft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.black-box {
+  width: 50%;
+  height: 150px;
+  background-color: black;
+  margin-right: 10px;
+}
+
+.wallet-info {
+  width: 50%;
+  text-align: right;

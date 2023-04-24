@@ -66,6 +66,7 @@ async function displayNFTs(address) {
                 nft.innerHTML = `
                     <img src="${metadata.image}" alt="${metadata.name}">
                     <h3>${metadata.name}</h3>
+                    <p>Last for-sale price: ${metadata.Books} ETH</p>
                 `;
                 nftGrid.appendChild(nft);
             }
