@@ -52,15 +52,16 @@ connectBtn.addEventListener("click", async () => {
         currentTokenId++;
       }
 
-      const connectWalletSection = document.querySelector('.connect-wallet');
-      const dashboardSection = document.querySelector('.dashboard');
+      const connectWalletSection = document.querySelector(".connect-wallet");
+      const dashboardSection = document.querySelector(".dashboard");
 
       if (connectWalletSection && dashboardSection) {
-      connectWalletSection.style.display = 'none';
-      dashboardSection.style.display = 'block';
+       connectWalletSection.classList.remove("connect-wallet");
+        dashboardSection.classList.add("connect-wallet");
       } else {
-       console.error('Cannot find .connect-wallet and/or .dashboard elements');
+      console.error("Cannot find .connect-wallet and/or .dashboard elements");
       }
-   }
+
+    }
   }
 });
