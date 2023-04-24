@@ -8,7 +8,7 @@ const CONTRACT_ABI = [{"inputs":[{"components":[{"internalType":"string","name":
 
 
 
-const ALCHEMY_API_KEY = "0iVz_duFVpyzVcHv6GgqHjBFNhkbqn0J";
+const API_KEY = "0iVz_duFVpyzVcHv6GgqHjBFNhkbqn0J";
 const web3 = new Web3(new Web3.providers.HttpProvider(`https://eth-mainnet.alchemyapi.io/v2/${API_KEY}`));
 const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
 
