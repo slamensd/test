@@ -49,10 +49,10 @@ async function displayERC721Balance(address) {
 async function displayNFTs(address) {
     try {
         const nftGrid = document.querySelector('.nft-grid');
-        const maxTokenId = 10000; // Set this value to a suitable maximum token ID
+        const totalSupply = await contract.methods.totalSupply().call();
         const ipfsGateway = 'https://ipfs.io/ipfs/';
 
-        for (let tokenId = 1; tokenId <= maxTokenId; tokenId++) {
+        for (let tokenId = 1; tokenId <= totalSupply; tokenId++) {
             const owner = await contract.methods.ownerOf(tokenId).call();
 
             if (owner.toLowerCase() === address.toLowerCase()) {
