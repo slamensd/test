@@ -40,7 +40,7 @@ async function getContractABI() {
 async function displayERC721Balance(address) {
     try {
         const balance = await contract.methods.balanceOf(address).call();
-        document.getElementById('erc721-balance').textContent = balance;
+        document.getElementById('nippy-balance').textContent = balance;
     } catch (error) {
         console.error("Error fetching balance:", error);
     }
