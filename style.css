@@ -1,3 +1,52 @@
-.hidden {
-  display: none;
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  height: 80px;
+  padding-left: 15px;
+  background-color: #f8f9fa;
+}
+
+.logo {
+  max-height: 60px;
+}
+
+.nav {
+  flex-shrink: 0;
+  width: 200px;
+  padding: 15px;
+}
+
+.nav-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.nav-list li {
+  margin-bottom: 10px;
+}
+
+.main {
+  flex-grow: 1;
+  padding: 15px;
+}
+
+.connect-wallet {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.wallet-info {
+  margin-bottom: 15px;
+}
+
+.nft-grid {
+  gap: 15px;
 }
