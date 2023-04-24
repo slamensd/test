@@ -22,12 +22,22 @@ connectBtn.addEventListener("click", async () => {
       erc721BalanceElem.innerText = balance;
 
       // Display NFTs
-      for (let i = 0; i < balance; i++) {
-        const tokenId = await contract.methods.tokenOfOwnerByIndex(userAccount, i).call();
-        const tokenURI = await contract.methods.tokenURI(tokenId).call();
-        const metadata = await fetch(tokenURI).then((res) => res.json());
-        const nftCard = createNftCard(metadata);
-        nftContainer.appendChild(nftCard);
+      let fetchedTokens = 0;
+      let currentTokenId = 0;
+      const totalSupply = await contract.methods.totalSupply().call();
+
+      while (fetchedTokens < balance && currentTokenId < totalSupply) {
+        const owner = await contract.methods.ownerOf(currentTokenId).call().catch(() => null);
+
+        if (owner === userAccount) {
+          const tokenURI = await contract.methods.tokenURI(currentTokenId).call();
+          const metadata = await fetch(tokenURI).then((res) => res.json());
+          const nftCard = createNftCard(metadata);
+          nftContainer.appendChild(nftCard);
+          fetchedTokens++;
+        }
+
+        currentTokenId++;
       }
 
       // Show dashboard
