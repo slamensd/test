@@ -4,15 +4,15 @@ const abiUrl = "https://api.etherscan.io/api?module=contract&action=getabi&addre
 let web3;
 let contract;
 
-async function getOwnerTokenIds(address) {
-    const tokenIds = [];
-    const balance = await contract.methods.balanceOf(address).call();
-    for (let i = 0; i < balance; i++) {
-        const tokenId = await contract.methods.tokenOfOwnerByIndex(address, i).call();
-        tokenIds.push(tokenId);
+async function getOwnerTokenIds(ownerAddress) {
+    try {
+      const tokenIds = await contract.methods.tokensOfOwner(ownerAddress).call();
+      return tokenIds;
+    } catch (error) {
+      console.error("Error fetching token IDs:", error);
     }
-    return tokenIds;
-}
+  }
+  
 
 
 async function connectWallet() {
