@@ -1,5 +1,3 @@
-
-
 const connectBtn = document.getElementById("connect-btn");
 const walletAddressElem = document.getElementById("wallet-address");
 const erc721BalanceElem = document.getElementById("erc721-balance");
@@ -62,6 +60,9 @@ connectBtn.addEventListener("click", async () => {
       console.error("Cannot find .connect-wallet and/or .dashboard elements");
       }
 
+    }
+    catch (err) {
+      console.error(err);
     }
   }
 });
