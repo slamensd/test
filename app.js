@@ -8,34 +8,11 @@ const CONTRACT_ABI = [{"inputs":[{"components":[{"internalType":"string","name":
 
 
 
-
-
 const ALCHEMY_API_KEY = "0iVz_duFVpyzVcHv6GgqHjBFNhkbqn0J";
-const alchemyBaseUrl = `https://eth-mainnet.g.alchemy.com/v2/0iVz_duFVpyzVcHv6GgqHjBFNhkbqn0J`;
+const web3 = new Web3(new Web3.providers.HttpProvider(`https://eth-mainnet.alchemyapi.io/v2/${API_KEY}`));
+const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
 
-let userAccount = null;
-let alchemyWeb3 = null;
-let alchemyContract = null;
-
-async function fetchNFTsForAddress() {
-  const response = await fetch(`${alchemyBaseUrl}/?module=account&action=tokennfttx&contractaddress=${CONTRACT_ADDRESS}&address=${userAccount}&page=1&offset=10`);
-  const data = await response.json();
-
-  const nftPromises = data.result.map(async (tx) => {
-    const tokenId = tx.tokenID;
-    const metadata = await alchemyContract.methods.tokenURI(tokenId).call();
-    return fetch(metadata).then((res) => res.json());
-  });
-
-  const nftData = await Promise.all(nftPromises);
-
-  nftData.forEach((metadata) => {
-    const nftCard = createNftCard(metadata);
-    nftContainer.appendChild(nftCard);
-  });
-}
-
-function createNftCard(metadata) {
+async function createNftCard(metadata) {
   const card = document.createElement("div");
   card.className = "nft-card card mb-3";
   card.innerHTML = `
@@ -49,32 +26,48 @@ function createNftCard(metadata) {
 }
 
 connectBtn.addEventListener("click", async () => {
-  if (window.ethereum) {
-    try {
-      await window.ethereum.request({ method: "eth_requestAccounts" });
-      userAccount = await window.ethereum.request({ method: "eth_accounts" });
-      walletAddressElem.innerText = userAccount[0];
+  try {
+    const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+    const userAccount = accounts[0];
+    walletAddressElem.innerText = userAccount;
 
-      const provider = new ethers.providers.AlchemyProvider("mainnet", ALCHEMY_API_KEY);
-      alchemyWeb3 = new Web3(provider);
-      alchemyContract = new alchemyWeb3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+    const balance = await contract.methods.balanceOf(userAccount).call();
+    erc721BalanceElem.innerText = balance;
 
-      const balance = await alchemyContract.methods.balanceOf(userAccount[0]).call();
-      erc721BalanceElem.innerText = balance;
-
-      await fetchNFTsForAddress();
-
-      const connectWalletSection = document.querySelector(".connect-wallet");
-      const dashboardSection = document.querySelector(".dashboard");
-
-      if (connectWalletSection && dashboardSection) {
-        connectWalletSection.classList.remove("connect-wallet");
-        dashboardSection.classList.add("connect-wallet");
-      } else {
-        console.error("Cannot find .connect-wallet and/or .dashboard elements");
-      }
-    } catch (error) {
-      console.error("Error connecting wallet:", error);
+    const nftIds = [];
+    for (let i = 0; i < balance; i++) {
+      const nftId = await contract.methods.tokenOfOwnerByIndex(userAccount, i).call();
+      nftIds.push(nftId);
     }
+
+    const promises = nftIds.map((nftId) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const tokenURI = await contract.methods.tokenURI(nftId).call();
+          const metadata = await fetch(tokenURI).then((res) => res.json());
+          const nftCard = await createNftCard(metadata);
+          resolve(nftCard);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+
+    const nftCards = await Promise.all(promises);
+    nftCards.forEach((nftCard) => {
+      nftContainer.appendChild(nftCard);
+    });
+
+    const connectWalletSection = document.querySelector(".connect-wallet");
+    const dashboardSection = document.querySelector(".dashboard");
+
+    if (connectWalletSection && dashboardSection) {
+      connectWalletSection.classList.remove("connect-wallet");
+      dashboardSection.classList.add("connect-wallet");
+    } else {
+      console.error("Cannot find .connect-wallet and/or .dashboard elements");
+    }
+  } catch (error) {
+    console.error("Error connecting wallet:", error);
   }
 });
