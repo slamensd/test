@@ -76,15 +76,4 @@ async function displayNFTs(address) {
     }
 }
 
-// Disconnect wallet if it is already connected
-window.addEventListener('load', async () => {
-    if (window.ethereum && window.ethereum.isConnected()) {
-        try {
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
-            await ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
-            await ethereum.request({ method: 'wallet_revokePermissions', params: [{ targetDomain: window.location.origin, permissions: ['eth_accounts'] }] });
-        } catch (error) {
-            console.error("Error disconnecting wallet:", error);
-        }
-    }
-});
+
