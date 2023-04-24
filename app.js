@@ -47,25 +47,25 @@ async function displayERC721Balance(address) {
 }
 
 async function displayNFTs(address) {
-    try {
-        const balance = await contract.methods.balanceOf(address).call();
-        const nftGrid = document.querySelector('.nft-grid');
+  try {
+      const tokenIds = await contract.methods.tokensOfOwner(address).call();
+      const nftGrid = document.querySelector('.nft-grid');
 
-        for (let i = 0; i < balance; i++) {
-            const tokenId = await contract.methods.tokenOfOwnerByIndex(address, i).call();
-            const tokenURI = await contract.methods.tokenURI(tokenId).call();
-            const response = await fetch(tokenURI);
-            const metadata = await response.json();
+      for (let tokenId of tokenIds) {
+          const tokenURI = await contract.methods.tokenURI(tokenId).call();
+          const response = await fetch(tokenURI);
+          const metadata = await response.json();
 
-            const nft = document.createElement('div');
-            nft.classList.add('nft');
-            nft.innerHTML = `
-                <img src="${metadata.image}" alt="${metadata.name}">
-                <h3>${metadata.name}</h3>
-            `;
-            nftGrid.appendChild(nft);
-        }
-    } catch (error) {
-        console.error("Error fetching NFTs:", error);
-    }
+          const nft = document.createElement('div');
+          nft.classList.add('nft');
+          nft.innerHTML = `
+              <img src="${metadata.image}" alt="${metadata.name}">
+              <h3>${metadata.name}</h3>
+          `;
+          nftGrid.appendChild(nft);
+      }
+  } catch (error) {
+      console.error("Error fetching NFTs:", error);
+  }
 }
+
