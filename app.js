@@ -1,17 +1,27 @@
 const contractAddress = "0x9674739124d69d555712a30e0a44de648f494219";
-const abiUrl = "https://api.etherscan.io/api?module=contract&action=getabi&address=0xa878c0aeaaa76ec7a370b76ac5bcac4364ed60e1";
+const abiUrl = "https://api.etherscan.io/api?module=contract&action=getabi&address=0x9674739124d69d555712a30e0a44de648f494219";
 
 let web3;
 let contract;
 
 async function getOwnerTokenIds(ownerAddress) {
+    const tokenIds = [];
+
     try {
-      const tokenIds = await contract.methods.tokensOfOwner(ownerAddress).call();
-      return tokenIds;
+        const totalTokens = await contract.methods.totalSupply().call();
+        for (let i = 0; i < totalTokens; i++) {
+            const tokenId = await contract.methods.tokenByIndex(i).call();
+            const tokenOwner = await contract.methods.ownerOf(tokenId).call();
+            if (tokenOwner.toLowerCase() === ownerAddress.toLowerCase()) {
+                tokenIds.push(tokenId);
+            }
+        }
     } catch (error) {
-      console.error("Error fetching token IDs:", error);
+        console.error("Error fetching token IDs:", error);
     }
-  }
+
+    return tokenIds;
+}
   
 
 
