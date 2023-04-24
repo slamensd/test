@@ -1,5 +1,5 @@
 const contractAddress = "0x9674739124d69d555712a30e0a44de648f494219";
-const abiUrl = "http://api.etherscan.io/api?module=contract&action=getabi&address=0xa878c0aeaaa76ec7a370b76ac5bcac4364ed60e1&format=raw";
+const abiUrl = "https://api.etherscan.io/api?module=contract&action=getabi&address=0xa878c0aeaaa76ec7a370b76ac5bcac4364ed60e1";
 
 let web3;
 let contract;
