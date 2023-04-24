@@ -62,4 +62,5 @@ connectBtn.addEventListener("click", async () => {
        console.error('Cannot find .connect-wallet and/or .dashboard elements');
       }
    }
+  }
 });
