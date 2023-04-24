@@ -49,7 +49,7 @@ async function displayERC721Balance(address) {
 async function displayNFTs(address) {
   try {
       const nftGrid = document.querySelector('.nft-grid');
-      const maxTokenId = 10000; // Set this value to a suitable maximum token ID
+      const maxTokenId = 3222; // Set this value to a suitable maximum token ID
 
       for (let tokenId = 1; tokenId <= maxTokenId; tokenId++) {
           const owner = await contract.methods.ownerOf(tokenId).call();
