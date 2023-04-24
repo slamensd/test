@@ -58,28 +58,16 @@ connectBtn.addEventListener("click", async () => {
   }
 });
 
+
 function createNftCard(metadata) {
   const card = document.createElement("div");
-  card.className = "card col-md-3";
-
-  const img = document.createElement("img");
-  img.src = metadata.image;
-  img.className = "card-img-top";
-  card.appendChild(img);
-
-  const cardBody = document.createElement("div");
-  cardBody.className = "card-body";
-  card.appendChild(cardBody);
-
-  const cardTitle = document.createElement("h5");
-  cardTitle.className = "card-title";
-  cardTitle.innerText = metadata.name;
-  cardBody.appendChild(cardTitle);
-
-  const cardText = document.createElement("p");
-  cardText.className = "card-text";
-  cardText.innerText = metadata.description;
-  cardBody.appendChild(cardText);
-
+  card.className = "nft-card card mb-3";
+  card.innerHTML = `
+    <div class="card-body">
+      <h3 class="card-title">${metadata.name}</h3>
+      <img src="${metadata.image}" alt="${metadata.name}" class="card-img-top" />
+      <p class="card-text">${metadata.description}</p>
+    </div>
+  `;
   return card;
 }
