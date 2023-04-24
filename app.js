@@ -4,6 +4,17 @@ const abiUrl = "https://api.etherscan.io/api?module=contract&action=getabi&addre
 let web3;
 let contract;
 
+async function getOwnerTokenIds(address) {
+    const tokenIds = [];
+    const balance = await contract.methods.balanceOf(address).call();
+    for (let i = 0; i < balance; i++) {
+        const tokenId = await contract.methods.tokenOfOwnerByIndex(address, i).call();
+        tokenIds.push(tokenId);
+    }
+    return tokenIds;
+}
+
+
 async function connectWallet() {
     if (window.ethereum) {
         web3 = new Web3(window.ethereum);
@@ -17,7 +28,8 @@ async function connectWallet() {
             
             await getContractABI();
             await displayERC721Balance(walletAddress);
-            await displayNFTs(walletAddress);
+            const tokenIds = await getOwnerTokenIds(walletAddress);
+            await displayNFTs(tokenIds);
         } catch (error) {
             console.error("Error connecting wallet:", error);
         }
