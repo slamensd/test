@@ -25,13 +25,15 @@
             <div id="wallet-connect">
                 <button onclick="connectWallet()">Connect Wallet</button>
             </div>
-            <div id="dashboard" style="display: none;">
-                <section class="wallet-info">
-                    <p>Connected Address: <span id="wallet-address"></span></p>
-                    <p>ERC-721 Balance: <span id="erc721-balance"></span></p>
-                </section>
-                <section class="nft-grid">
-                </section>
+            <div class="dashboard hidden">
+                <div class="dashboard-info">
+                    <div class="black-box"></div>
+                    <div class="wallet-info">
+                        <p>Connected Address: <span class="wallet-address"></span></p>
+                        <p>Nippy: Magnet for Mischief Balance: <span class="nippy-balance"></span></p>
+                    </div>
+                </div>
+                <div class="nft-grid"></div>
             </div>
         </main>
     </div>
