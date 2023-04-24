@@ -48,7 +48,9 @@ async function displayERC721Balance(address) {
 
 async function displayNFTs(tokenIds) {
     const nftGrid = document.getElementById('nft-grid');
+    const loader = document.getElementById('loader');
     nftGrid.innerHTML = '';
+    loader.style.display = 'block'; // Show loader
 
     for (const tokenId of tokenIds) {
         const tokenURI = await contract.methods.tokenURI(tokenId).call();
@@ -79,5 +81,6 @@ async function displayNFTs(tokenIds) {
 
         nftGrid.appendChild(nft);
     }
+    loader.style.display = 'none'; // Hide loader
 }
 
