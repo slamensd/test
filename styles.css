@@ -1,48 +1,38 @@
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
+  font-family: Arial, sans-serif;
+  text-align: center;
 }
 
-.container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding-top: 50px;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  border-color: #007bff;
-}
-
-h1 {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-h3 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
+h1, h2 {
+  margin: 20px;
 }
 
 #nftList {
-  list-style-type: none;
-  padding: 0;
-}
-
-#nftList li {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 1rem;
 }
 
-#nftList li button {
-  margin-left: 1rem;
+.nftItem {
+  margin: 10px;
 }
 
-#status {
-  font-weight: bold;
-  color: #007bff;
+.nftItem button {
+  width: 150px;
+  height: 40px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.greenButton {
+  background-color: green;
+  color: black;
+}
+
+.greyButton {
+  background-color: grey;
+  color: black;
 }

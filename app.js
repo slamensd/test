@@ -1,8 +1,6 @@
-let web3;
-let accounts;
-let contract;
-
-const ABI = [
+// Specify the contract address and ABI
+const contractAddress = '0xaD278a43022233c5C6FEF5eC92BB35200667de91';
+const contractABI = [
 	{
 		"inputs": [
 			{
@@ -133,102 +131,80 @@ const ABI = [
 	}
 ];
 
-const CONTRACT_ADDRESS = '0xaD278a43022233c5C6FEF5eC92BB35200667de91';
-
-async function initWeb3() {
-  try {
-    // Modern dapp browsers
-    if (window.ethereum) {
-      web3 = new Web3(window.ethereum);
-      await window.ethereum.enable();
-    }
-    // Legacy dapp browsers
-    else if (window.web3) {
-      web3 = new Web3(window.web3.currentProvider);
-    }
-    // Non-dapp browsers
-    else {
-      throw new Error('Please use a dapp browser like MetaMask to interact with this application!');
-    }
-  } catch (error) {
-    console.error(error);
-    alert('Failed to connect to the wallet. Please make sure you have a compatible wallet installed and try again.');
-  }
+// Initialize Web3
+let web3;
+if (typeof window.ethereum !== 'undefined') {
+    web3 = new Web3(window.ethereum);
+} else {
+    alert("Please install MetaMask to use this dApp");
 }
 
-async function onConnect() {
-  if (!web3) {
-    await initWeb3();
-  }
+// Contract instance
+const contract = new web3.eth.Contract(contractABI, contractAddress);
 
-  if (!accounts || accounts.length === 0) {
-    accounts = await web3.eth.getAccounts();
-  }
+// Function to check if the user owns an NFT
+async function checkOwnership(nftId) {
+    const accounts = await web3.eth.requestAccounts();
+    const userAddress = accounts[0];
 
-  if (!contract) {
-    contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
-  }
-
-  const connectBtn = document.getElementById('connectBtn');
-
-  if (accounts.length > 0) {
-    connectBtn.innerText = 'Disconnect';
-    connectBtn.classList.remove('btn-primary');
-    connectBtn.classList.add('btn-secondary');
-  } else {
-    connectBtn.innerText = 'Connect Wallet';
-    connectBtn.classList.remove('btn-secondary');
-    connectBtn.classList.add('btn-primary');
-  }
+    const owner = await contract.methods.ownerOf(nftId).call();
+    return owner.toLowerCase() === userAddress.toLowerCase();
 }
 
-async function getAvailableNFTs() {
-  const nftList = document.getElementById('nftList');
-  nftList.innerHTML = '';
+// Function to claim an NFT
+async function claimNFT(nftId) {
+    const accounts = await web3.eth.requestAccounts();
+    const userAddress = accounts[0];
 
-  const nftData = [
-    { nftContract: "0x9674739124d69D555712a30e0A44dE648F494219", tokenId: "1019" }
-  ];
-
-  for (const data of nftData) {
-    const listItem = document.createElement('li');
-    const nftInfo = document.createElement('span');
-    const claimButton = document.createElement('button');
-
-    nftInfo.innerText = `NFT Contract: ${data.contractAddress}, Token ID: ${data.tokenId}, USDC: ${data.usdcAmount}`;
-    claimButton.innerText = 'Claim';
-    claimButton.classList.add('btn', 'btn-success');
-    claimButton.disabled = true;
-
-    const isOwner = await contract.methods.isNftOwner(accounts[0], data.contractAddress, data.tokenId).call();
-
-    if (isOwner) {
-      claimButton.disabled = false;
-    }
-
-    claimButton.addEventListener('click', claimNFT);
-
-    listItem.appendChild(nftInfo);
-    listItem.appendChild(claimButton);
-    nftList.appendChild(listItem);
-  }
-}
-
-async function claimNFT(event) {
-  const button = event.target;
-  const listItem = button.parentNode;
-  const nftInfo = listItem.firstChild;
-  const contractAddress = nftInfo.innerText.split(' ')[2];
-  const tokenId = parseInt(nftInfo.innerText.split(' ')[5]);
-
-  try {
-    await contract.methods.claim(tokenId).send({ from: accounts[0] });
+    await contract.methods.claim(nftId).send({ from: userAddress });
     alert('NFT claimed successfully!');
-    button.disabled = true;
-  } catch (error) {
-    console.error(error);
-    alert('Failed to claim NFT. Please try again.');
-  }
+    location.reload(); // Refresh the page after claiming
 }
 
-// Call on
+// Function to render the NFT list
+async function renderNFTList() {
+    const nftListElement = document.getElementById('nftList');
+    nftListElement.innerHTML = '';
+
+    const nftIds = [1019]; // Replace with the actual NFT IDs you want to display
+
+    for (const nftId of nftIds) {
+        const nftData = await contract.methods.nftData(nftId).call();
+
+        const nftItemElement = document.createElement('div');
+        nftItemElement.classList.add('nftItem');
+
+        const nftInfoElement = document.createElement('p');
+        nftInfoElement.innerHTML = `NFT ID: ${nftId}<br>Contract Address: ${nftData.contractAddress}<br>USDC Amount: ${nftData.usdcAmount}`;
+
+        const claimButtonElement = document.createElement('button');
+        claimButtonElement.innerText = 'Claim';
+        claimButtonElement.addEventListener('click', async () => {
+            await claimNFT(nftId);
+        });
+
+        // Check ownership and set button style
+        const isOwner = await checkOwnership(nftId);
+        if (isOwner) {
+            claimButtonElement.classList.add('greenButton');
+        } else {
+            claimButtonElement.classList.add('greyButton');
+            claimButtonElement.disabled = true;
+        }
+
+        nftItemElement.appendChild(nftInfoElement);
+        nftItemElement.appendChild(claimButtonElement);
+        nftListElement.appendChild(nftItemElement);
+    }
+}
+
+// Check if MetaMask is connected
+if (web3) {
+    window.ethereum.enable().then(() => {
+        renderNFTList();
+    }).catch((error) => {
+        console.log(error);
+    });
+} else {
+    alert("Please install MetaMask to use this dApp");
+}
