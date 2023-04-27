@@ -1,5 +1,4 @@
 
-
 const INFURA_ID = "7b0930fef5674e7e9816c40b98751c85";
 const CONTRACT_ADDRESS = "0xaD278a43022233c5C6FEF5eC92BB35200667de91";
 const ABI = [
@@ -131,7 +130,7 @@ const ABI = [
 		"stateMutability": "view",
 		"type": "function"
 	}
-]; // Use the ABI you obtained earlier
+] // Use the ABI you obtained earlier
 
 let web3, web3Modal, provider, accounts, contract;
 
