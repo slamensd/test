@@ -204,9 +204,25 @@ async function initWeb3() {
       await initWeb3();
     }
   
-    accounts = await web3.eth.getAccounts();
-    contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
-    updateClaimButtons();
+    if (!accounts || accounts.length === 0) {
+      accounts = await web3.eth.getAccounts();
+    }
+  
+    if (!contract) {
+      contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
+    }
+  
+    const connectBtn = document.getElementById('connectBtn');
+  
+    if (accounts.length > 0) {
+      connectBtn.innerText = 'Disconnect';
+      connectBtn.classList.remove('btn-primary');
+      connectBtn.classList.add('btn-secondary');
+    } else {
+      connectBtn.innerText = 'Connect Wallet';
+      connectBtn.classList.remove('btn-secondary');
+      connectBtn.classList.add('btn-primary');
+    }
   }
   
   
