@@ -1,5 +1,10 @@
 body {
   font-family: Arial, sans-serif;
+  background: radial-gradient(ellipse at center, #27aae1 0%, #27aae1 52%, #1c75bc 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
   text-align: center;
 }
 
