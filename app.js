@@ -196,12 +196,14 @@ async function updateClaimButtons() {
 }
 
 async function onConnect() {
-  if (!web3) {
-    await initWeb3();
+    if (!web3) {
+      await initWeb3();
+    }
+  
+    accounts = await web3.eth.getAccounts();
+    updateClaimButtons();
   }
-
-  updateClaimButtons();
-}
+  
 
 document.getElementById("connectBtn").addEventListener("click", onConnect);
 getAvailableNFTs();
