@@ -148,30 +148,36 @@ async function initWeb3() {
   }
   
 
-async function getAvailableNFTs() {
-  const nftList = document.getElementById("nftList");
-  const nftData = [
-    { nftContract: "0x9674739124d69D555712a30e0A44dE648F494219", tokenId: "1019", usdcAmount: "20000000000000000000" },
-    
-  ];
-
-  for (let i = 0; i < nftData.length; i++) {
-    const { nftContract, tokenId, usdcAmount } = nftData[i];
-
-    const listItem = document.createElement("li");
-    const nftInfo = document.createElement("span");
-    nftInfo.innerText = `NFT Contract: ${nftContract}, Token ID: ${tokenId}, USDC: ${web3.utils.fromWei(usdcAmount, "mwei")}`;
-
-    const claimButton = document.createElement("button");
-    claimButton.innerText = "Claim";
-    claimButton.disabled = true;
-    claimButton.classList.add("btn");
-
-    listItem.appendChild(nftInfo);
-    listItem.appendChild(claimButton);
-    nftList.appendChild(listItem);
+  async function getAvailableNFTs() {
+    const nftList = document.getElementById("nftList");
+    const nftData = [
+      { nftContract: "0x9674739124d69D555712a30e0A44dE648F494219", tokenId: "1", usdcAmount: "20000000000000000000" },
+      { nftContract: "0x9674739124d69D555712a30e0A44dE648F494219", tokenId: "2", usdcAmount: "30000000000000000000" },
+      { nftContract: "0x9674739124d69D555712a30e0A44dE648F494219", tokenId: "3", usdcAmount: "40000000000000000000" },
+    ];
+  
+    for (let i = 0; i < nftData.length; i++) {
+      const { nftContract, tokenId, usdcAmount } = nftData[i];
+  
+      const listItem = document.createElement("li");
+      const nftInfo = document.createElement("span");
+      nftInfo.innerText = `NFT Contract: ${nftContract}, Token ID: ${tokenId}, USDC: ${fromWei(usdcAmount, "mwei")}`;
+  
+      const claimButton = document.createElement("button");
+      claimButton.innerText = "Claim";
+      claimButton.disabled = true;
+      claimButton.classList.add("btn");
+  
+      listItem.appendChild(nftInfo);
+      listItem.appendChild(claimButton);
+      nftList.appendChild(listItem);
+    }
   }
-}
+  
+  function fromWei(amount, unit) {
+    return web3.utils.fromWei(amount, unit);
+  }
+  
 
 async function updateClaimButtons() {
   const nftListItems = document.querySelectorAll("#nftList li");
