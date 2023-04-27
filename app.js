@@ -1,4 +1,7 @@
-const CONTRACT_ADDRESS = "0xaD278a43022233c5C6FEF5eC92BB35200667de91";
+let web3;
+let accounts;
+let contract;
+
 const ABI = [
 	{
 		"inputs": [
@@ -128,106 +131,104 @@ const ABI = [
 		"stateMutability": "view",
 		"type": "function"
 	}
-] // Use the ABI you obtained earlier
+];
 
-let web3, accounts, contract;
+const CONTRACT_ADDRESS = '0xaD278a43022233c5C6FEF5eC92BB35200667de91';
 
 async function initWeb3() {
+  try {
+    // Modern dapp browsers
     if (window.ethereum) {
-      try {
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-        web3 = new Web3(window.ethereum);
-      } catch (error) {
-        console.error("User denied account access");
-      }
-    } else if (window.web3) {
+      web3 = new Web3(window.ethereum);
+      await window.ethereum.enable();
+    }
+    // Legacy dapp browsers
+    else if (window.web3) {
       web3 = new Web3(window.web3.currentProvider);
-    } else {
-      console.error("No web3 provider detected");
     }
+    // Non-dapp browsers
+    else {
+      throw new Error('Please use a dapp browser like MetaMask to interact with this application!');
+    }
+  } catch (error) {
+    console.error(error);
+    alert('Failed to connect to the wallet. Please make sure you have a compatible wallet installed and try again.');
   }
-  
+}
 
-  async function getAvailableNFTs() {
-    const nftList = document.getElementById("nftList");
-    const nftData = [
-      { nftContract: "0x9674739124d69D555712a30e0A44dE648F494219", tokenId: "1019" }
-    ];
-  
-    for (let i = 0; i < nftData.length; i++) {
-      const { nftContract, tokenId } = nftData[i];
-  
-      const listItem = document.createElement("li");
-      const nftInfo = document.createElement("span");
-      nftInfo.innerText = `NFT Contract: ${nftContract}, Token ID: ${tokenId}`;
-  
-      const claimButton = document.createElement("button");
-      claimButton.innerText = "Claim";
-      claimButton.disabled = true;
-      claimButton.classList.add("btn", "btn-primary"); // Add the btn-primary class
-  
-      listItem.appendChild(nftInfo);
-      listItem.appendChild(claimButton);
-      nftList.appendChild(listItem);
-    }
+async function onConnect() {
+  if (!web3) {
+    await initWeb3();
   }
-  
-  
-  
 
-  async function updateClaimButtons() {
-    const nftListItems = document.querySelectorAll("#nftList li");
-    const userAccount = accounts[0];
-  
-    for (const listItem of nftListItems) {
-      const nftContract = listItem.children[0].innerText.split(" ")[2];
-      const tokenId = listItem.children[0].innerText.split(" ")[5];
-  
-      const isOwner = await contract.methods.isNftOwner(userAccount, nftContract, tokenId).call();
-      const claimButton = listItem.children[1];
-  
-      if (isOwner) {
-        claimButton.disabled = false;
-        claimButton.classList.remove("btn-secondary");
-        claimButton.classList.add("btn-success");
-      } else {
-        claimButton.disabled = true;
-        claimButton.classList.remove("btn-success");
-        claimButton.classList.add("btn-secondary");
-      }
-    }
+  if (!accounts || accounts.length === 0) {
+    accounts = await web3.eth.getAccounts();
   }
-  
 
-  async function onConnect() {
-    if (!web3) {
-      await initWeb3();
-    }
-  
-    if (!accounts || accounts.length === 0) {
-      accounts = await web3.eth.getAccounts();
-    }
-  
-    if (!contract) {
-      contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
-    }
-  
-    const connectBtn = document.getElementById('connectBtn');
-  
-    if (accounts.length > 0) {
-      connectBtn.innerText = 'Disconnect';
-      connectBtn.classList.remove('btn-primary');
-      connectBtn.classList.add('btn-secondary');
-    } else {
-      connectBtn.innerText = 'Connect Wallet';
-      connectBtn.classList.remove('btn-secondary');
-      connectBtn.classList.add('btn-primary');
-    }
+  if (!contract) {
+    contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
   }
-  
-  
 
-  window.addEventListener('load', async () => {
-    await onConnect();
-    await getAvailableNFTs();
-  });
+  const connectBtn = document.getElementById('connectBtn');
+
+  if (accounts.length > 0) {
+    connectBtn.innerText = 'Disconnect';
+    connectBtn.classList.remove('btn-primary');
+    connectBtn.classList.add('btn-secondary');
+  } else {
+    connectBtn.innerText = 'Connect Wallet';
+    connectBtn.classList.remove('btn-secondary');
+    connectBtn.classList.add('btn-primary');
+  }
+}
+
+async function getAvailableNFTs() {
+  const nftList = document.getElementById('nftList');
+  nftList.innerHTML = '';
+
+  const nftData = [
+    { nftContract: "0x9674739124d69D555712a30e0A44dE648F494219", tokenId: "1019" }
+  ];
+
+  for (const data of nftData) {
+    const listItem = document.createElement('li');
+    const nftInfo = document.createElement('span');
+    const claimButton = document.createElement('button');
+
+    nftInfo.innerText = `NFT Contract: ${data.contractAddress}, Token ID: ${data.tokenId}, USDC: ${data.usdcAmount}`;
+    claimButton.innerText = 'Claim';
+    claimButton.classList.add('btn', 'btn-success');
+    claimButton.disabled = true;
+
+    const isOwner = await contract.methods.isNftOwner(accounts[0], data.contractAddress, data.tokenId).call();
+
+    if (isOwner) {
+      claimButton.disabled = false;
+    }
+
+    claimButton.addEventListener('click', claimNFT);
+
+    listItem.appendChild(nftInfo);
+    listItem.appendChild(claimButton);
+    nftList.appendChild(listItem);
+  }
+}
+
+async function claimNFT(event) {
+  const button = event.target;
+  const listItem = button.parentNode;
+  const nftInfo = listItem.firstChild;
+  const contractAddress = nftInfo.innerText.split(' ')[2];
+  const tokenId = parseInt(nftInfo.innerText.split(' ')[5]);
+
+  try {
+    await contract.methods.claim(tokenId).send({ from: accounts[0] });
+    alert('NFT claimed successfully!');
+    button.disabled = true;
+  } catch (error) {
+    console.error(error);
+    alert('Failed to claim NFT. Please try again.');
+  }
+}
+
+// Call on
