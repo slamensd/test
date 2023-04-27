@@ -151,15 +151,15 @@ async function initWeb3() {
   async function getAvailableNFTs() {
     const nftList = document.getElementById("nftList");
     const nftData = [
-      { nftContract: "0x9674739124d69D555712a30e0A44dE648F494219", tokenId: "1019", usdcAmount: "20000000000000000000"}
+      { nftContract: "0x9674739124d69D555712a30e0A44dE648F494219", tokenId: "1019" }
     ];
   
     for (let i = 0; i < nftData.length; i++) {
-      const { nftContract, tokenId, usdcAmount } = nftData[i];
+      const { nftContract, tokenId } = nftData[i];
   
       const listItem = document.createElement("li");
       const nftInfo = document.createElement("span");
-      nftInfo.innerText = `NFT Contract: ${nftContract}, Token ID: ${tokenId}, USDC: ${fromWei(usdcAmount, "mwei")}`;
+      nftInfo.innerText = `NFT Contract: ${nftContract}, Token ID: ${tokenId}`;
   
       const claimButton = document.createElement("button");
       claimButton.innerText = "Claim";
@@ -172,9 +172,6 @@ async function initWeb3() {
     }
   }
   
-  function fromWei(amount, unit) {
-    return web3.utils.fromWei(amount, unit);
-  }
   
 
 async function updateClaimButtons() {
