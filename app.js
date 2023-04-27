@@ -7,6 +7,38 @@ const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 
 const contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
 
+
 const connectWalletButton = document.getElementById("connect-wallet");
 const claimForm = document.querySelector(".claim-form");
-const claimUs
+const claimUsdcButton = document.getElementById("claim-usdc");
+const nftContractInput = document.getElementById("nft-contract");
+const tokenIdInput = document.getElementById("token-id");
+const statusElement = document.getElementById("status");
+
+let accounts = [];
+
+connectWalletButton.onclick = async () => {
+    accounts = await ethereum.request({ method: "eth_requestAccounts" });
+    if (accounts.length) {
+        claimForm.style.display = "block";
+        connectWalletButton.style.display = "none";
+    }
+};
+
+claimUsdcButton.onclick = async () => {
+    const nftContract = nftContractInput.value;
+    const tokenId = tokenIdInput.value;
+
+    if (!nftContract || !tokenId) {
+        statusElement.textContent = "Please provide valid input.";
+        return;
+    }
+
+    try {
+        await contract.methods.claimUsdc(nftContract, tokenId).send({ from: accounts[0] });
+        statusElement.textContent = "USDC claimed successfully!";
+    } catch (error) {
+        console.error(error);
+        statusElement.textContent = "Error claiming USDC. Make sure you own the NFT and have a valid claim.";
+    }
+};
