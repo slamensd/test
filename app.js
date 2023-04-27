@@ -164,7 +164,7 @@ async function initWeb3() {
       const claimButton = document.createElement("button");
       claimButton.innerText = "Claim";
       claimButton.disabled = true;
-      claimButton.classList.add("btn");
+      claimButton.classList.add("btn", "btn-primary"); // Add the btn-primary class
   
       listItem.appendChild(nftInfo);
       listItem.appendChild(claimButton);
@@ -173,27 +173,31 @@ async function initWeb3() {
   }
   
   
+  
 
-async function updateClaimButtons() {
-  const nftListItems = document.querySelectorAll("#nftList li");
-  const userAccount = accounts[0];
-
-  for (const listItem of nftListItems) {
-    const nftContract = listItem.children[0].innerText.split(" ")[2];
-    const tokenId = listItem.children[0].innerText.split(" ")[5];
-
-    const isOwner = await contract.methods.isNftOwner(userAccount, nftContract, tokenId).call();
-    const claimButton = listItem.children[1];
-
-    if (isOwner) {
-      claimButton.disabled = false;
-      claimButton.classList.add("btn-success");
-    } else {
-      claimButton.disabled = true;
-      claimButton.classList.add("btn-secondary");
+  async function updateClaimButtons() {
+    const nftListItems = document.querySelectorAll("#nftList li");
+    const userAccount = accounts[0];
+  
+    for (const listItem of nftListItems) {
+      const nftContract = listItem.children[0].innerText.split(" ")[2];
+      const tokenId = listItem.children[0].innerText.split(" ")[5];
+  
+      const isOwner = await contract.methods.isNftOwner(userAccount, nftContract, tokenId).call();
+      const claimButton = listItem.children[1];
+  
+      if (isOwner) {
+        claimButton.disabled = false;
+        claimButton.classList.remove("btn-secondary");
+        claimButton.classList.add("btn-success");
+      } else {
+        claimButton.disabled = true;
+        claimButton.classList.remove("btn-success");
+        claimButton.classList.add("btn-secondary");
+      }
     }
   }
-}
+  
 
 async function onConnect() {
     if (!web3) {
