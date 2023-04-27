@@ -199,14 +199,16 @@ async function initWeb3() {
   }
   
 
-async function onConnect() {
+  async function onConnect() {
     if (!web3) {
       await initWeb3();
     }
   
     accounts = await web3.eth.getAccounts();
+    contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
     updateClaimButtons();
   }
+  
   
 
 document.getElementById("connectBtn").addEventListener("click", onConnect);
