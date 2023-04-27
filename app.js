@@ -1,6 +1,25 @@
-// Specify the contract address and ABI
-const contractAddress = '0xaD278a43022233c5C6FEF5eC92BB35200667de91';
-const contractABI = [
+const Web3Modal = window.Web3Modal.default;
+const WalletConnectProvider = window.WalletConnectProvider.default;
+
+const providerOptions = {
+  walletconnect: {
+    package: WalletConnectProvider,
+    options: {
+      infuraId: "7b0930fef5674e7e9816c40b98751c85", // Replace with your Infura project ID
+    },
+  },
+};
+
+const web3Modal = new Web3Modal({
+  network: "mainnet",
+  cacheProvider: true,
+  providerOptions,
+});
+
+let web3;
+
+const contractAddress = "0xaD278a43022233c5C6FEF5eC92BB35200667de91";
+const abi = [
 	{
 		"inputs": [
 			{
@@ -131,80 +150,48 @@ const contractABI = [
 	}
 ];
 
-// Initialize Web3
-let web3;
-if (typeof window.ethereum !== 'undefined') {
-    web3 = new Web3(window.ethereum);
-} else {
-    alert("Please install MetaMask to use this dApp");
+const exampleNfts = [
+    { contractAddress: "0x9674739124d69D555712a30e0A44dE648F494219", tokenId: 1019 }
+];
+
+const nftList = document.getElementById("nftList");
+const status = document.getElementById("status");
+
+document.getElementById("connectBtn").addEventListener("click", init);
+
+async function init() {
+  const provider = await web3Modal.connect();
+  web3 = new Web3(provider);
+
+  provider.on("chainChanged", () => window.location.reload());
+  provider.on("accountsChanged", () => window.location.reload());
+
+  const contract = new web3.eth.Contract(abi, contractAddress);
+
+  exampleNfts.forEach((nft) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = `Contract: ${nft.contractAddress}, Token ID: ${nft.tokenId}`;
+
+    const claimBtn = document.createElement("button");
+    claimBtn.textContent = "Claim";
+    claimBtn.addEventListener("click", () => claim(nft, contract));
+
+    listItem.appendChild(claimBtn);
+    nftList.appendChild(listItem);
+  });
 }
 
-// Contract instance
-const contract = new web3.eth.Contract(contractABI, contractAddress);
+async function claim(nft, contract) {
+  const accounts = await web3.eth.getAccounts();
+  const tokenId = nft.tokenId;
 
-// Function to check if the user owns an NFT
-async function checkOwnership(nftId) {
-    const accounts = await web3.eth.requestAccounts();
-    const userAddress = accounts[0];
+  status.textContent = "Processing...";
 
-    const owner = await contract.methods.ownerOf(nftId).call();
-    return owner.toLowerCase() === userAddress.toLowerCase();
-}
-
-// Function to claim an NFT
-async function claimNFT(nftId) {
-    const accounts = await web3.eth.requestAccounts();
-    const userAddress = accounts[0];
-
-    await contract.methods.claim(nftId).send({ from: userAddress });
-    alert('NFT claimed successfully!');
-    location.reload(); // Refresh the page after claiming
-}
-
-// Function to render the NFT list
-async function renderNFTList() {
-    const nftListElement = document.getElementById('nftList');
-    nftListElement.innerHTML = '';
-
-    const nftIds = [1019]; // Replace with the actual NFT IDs you want to display
-
-    for (const nftId of nftIds) {
-        const nftData = await contract.methods.nftData(nftId).call();
-
-        const nftItemElement = document.createElement('div');
-        nftItemElement.classList.add('nftItem');
-
-        const nftInfoElement = document.createElement('p');
-        nftInfoElement.innerHTML = `NFT ID: ${nftId}<br>Contract Address: ${nftData.contractAddress}<br>USDC Amount: ${nftData.usdcAmount}`;
-
-        const claimButtonElement = document.createElement('button');
-        claimButtonElement.innerText = 'Claim';
-        claimButtonElement.addEventListener('click', async () => {
-            await claimNFT(nftId);
-        });
-
-        // Check ownership and set button style
-        const isOwner = await checkOwnership(nftId);
-        if (isOwner) {
-            claimButtonElement.classList.add('greenButton');
-        } else {
-            claimButtonElement.classList.add('greyButton');
-            claimButtonElement.disabled = true;
-        }
-
-        nftItemElement.appendChild(nftInfoElement);
-        nftItemElement.appendChild(claimButtonElement);
-        nftListElement.appendChild(nftItemElement);
-    }
-}
-
-// Check if MetaMask is connected
-if (web3) {
-    window.ethereum.enable().then(() => {
-        renderNFTList();
-    }).catch((error) => {
-        console.log(error);
-    });
-} else {
-    alert("Please install MetaMask to use this dApp");
+  try {
+    await contract.methods.claim(tokenId).send({ from: accounts[0] });
+    status.textContent = "Claim successful!";
+  } catch (error) {
+    console.error(error);
+    status.textContent = "An error occurred. Please try again.";
+  }
 }
