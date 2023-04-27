@@ -1,25 +1,8 @@
-const Web3Modal = window.Web3Modal.default;
-const WalletConnectProvider = window.WalletConnectProvider.default;
 
-const providerOptions = {
-  walletconnect: {
-    package: WalletConnectProvider,
-    options: {
-      infuraId: "7b0930fef5674e7e9816c40b98751c85", // Replace with your Infura project ID
-    },
-  },
-};
 
-const web3Modal = new Web3Modal({
-  network: "mainnet",
-  cacheProvider: true,
-  providerOptions,
-});
-
-let web3;
-
-const contractAddress = "0xaD278a43022233c5C6FEF5eC92BB35200667de91";
-const abi = [
+const INFURA_ID = "7b0930fef5674e7e9816c40b98751c85";
+const CONTRACT_ADDRESS = "0xaD278a43022233c5C6FEF5eC92BB35200667de91";
+const ABI = [
 	{
 		"inputs": [
 			{
@@ -148,50 +131,80 @@ const abi = [
 		"stateMutability": "view",
 		"type": "function"
 	}
-];
+]; // Use the ABI you obtained earlier
 
-const exampleNfts = [
-    { contractAddress: "0x9674739124d69D555712a30e0A44dE648F494219", tokenId: 1019 }
-];
+let web3, web3Modal, provider, accounts, contract;
 
-const nftList = document.getElementById("nftList");
-const status = document.getElementById("status");
+async function initWeb3() {
+    web3Modal = new Web3Modal({
+        cacheProvider: true,
+        providerOptions: {
+            walletconnect: {
+                package: WalletConnectProvider,
+                options: {
+                    infuraId: INFURA_ID,
+                },
+            },
+        },
+    });
 
-document.getElementById("connectBtn").addEventListener("click", init);
-
-async function init() {
-  const provider = await web3Modal.connect();
-  web3 = new Web3(provider);
-
-  provider.on("chainChanged", () => window.location.reload());
-  provider.on("accountsChanged", () => window.location.reload());
-
-  const contract = new web3.eth.Contract(abi, contractAddress);
-
-  exampleNfts.forEach((nft) => {
-    const listItem = document.createElement("li");
-    listItem.textContent = `Contract: ${nft.contractAddress}, Token ID: ${nft.tokenId}`;
-
-    const claimBtn = document.createElement("button");
-    claimBtn.textContent = "Claim";
-    claimBtn.addEventListener("click", () => claim(nft, contract));
-
-    listItem.appendChild(claimBtn);
-    nftList.appendChild(listItem);
-  });
+    provider = await web3Modal.connect();
+    web3 = new Web3(provider);
+    accounts = await web3.eth.getAccounts();
+    contract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
 }
 
-async function claim(nft, contract) {
-  const accounts = await web3.eth.getAccounts();
-  const tokenId = nft.tokenId;
-
-  status.textContent = "Processing...";
-
-  try {
-    await contract.methods.claim(tokenId).send({ from: accounts[0] });
-    status.textContent = "Claim successful!";
-  } catch (error) {
-    console.error(error);
-    status.textContent = "An error occurred. Please try again.";
-  }
+async function getAvailableNFTs() {
+    const nftCount = await contract.methods.getNftCount().call();
+    const nftList = document.getElementById("nftList");
+    
+    for (let i = 0; i < nftCount; i++) {
+        const nftData = await contract.methods.getNftDataByIndex(i).call();
+        const { nftContract, tokenId, usdcAmount } = nftData;
+        
+        const listItem = document.createElement("li");
+        const nftInfo = document.createElement("span");
+        nftInfo.innerText = `NFT Contract: ${nftContract}, Token ID: ${tokenId}, USDC: ${web3.utils.fromWei(usdcAmount, "mwei")}`;
+        
+        const claimButton = document.createElement("button");
+        claimButton.innerText = "Claim";
+        claimButton.disabled = true;
+        claimButton.classList.add("btn");
+        
+        listItem.appendChild(nftInfo);
+        listItem.appendChild(claimButton);
+        nftList.appendChild(listItem);
+    }
 }
+
+async function updateClaimButtons() {
+    const nftListItems = document.querySelectorAll("#nftList li");
+    const userAccount = accounts[0];
+    
+    for (const listItem of nftListItems) {
+        const nftContract = listItem.children[0].innerText.split(" ")[2];
+        const tokenId = listItem.children[0].innerText.split(" ")[5];
+        
+        const isOwner = await contract.methods.isNftOwner(userAccount, nftContract, tokenId).call();
+        const claimButton = listItem.children[1];
+        
+        if (isOwner) {
+            claimButton.disabled = false;
+            claimButton.classList.add("btn-success");
+        } else {
+            claimButton.disabled = true;
+            claimButton.classList.add("btn-secondary");
+        }
+    }
+}
+
+async function onConnect() {
+    if (!web3) {
+        await initWeb3();
+    }
+    
+    updateClaimButtons();
+}
+
+document.getElementById("connectBtn").addEventListener("click", onConnect);
+getAvailableNFTs();
