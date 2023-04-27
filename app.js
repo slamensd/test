@@ -227,5 +227,7 @@ async function initWeb3() {
   
   
 
-document.getElementById("connectBtn").addEventListener("click", onConnect);
-getAvailableNFTs();
+  window.addEventListener('load', async () => {
+    await onConnect();
+    await getAvailableNFTs();
+  });
